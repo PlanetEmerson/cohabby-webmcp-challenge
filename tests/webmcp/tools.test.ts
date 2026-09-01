@@ -26,6 +26,48 @@ async function executeAfterRendering(
 }
 
 describe('Living Decision Room WebMCP tools', () => {
+  it('supports Chrome preview runtimes that omit callback options while retaining visible completion', async () => {
+    const store = createDecisionRoomStore();
+    const stage = createWebMcpTools(store).find((tool) => tool.name === 'stage_living_brief')!;
+    const pending = Promise.resolve(stage.execute(sampleBrief, undefined as unknown as WebMCP.ToolExecuteCallbackOptions));
+    await Promise.resolve();
+    store.acknowledgeRendered(2);
+    await expect(pending).resolves.toMatchObject({
+      status: 'awaiting_human_review',
+      stateVersion: 2,
+    });
+  });
+
+  it('returns typed failures and does not mutate state for a pre-canceled invocation', async () => {
+    const store = createDecisionRoomStore();
+    const tools = new Map(createWebMcpTools(store).map((tool) => [tool.name, tool]));
+
+    await expect(tools.get('find_compatible_rooms')!.execute({}, {
+      signal: new AbortController().signal,
+    })).resolves.toEqual({
+      schemaVersion: 1,
+      stateVersion: 1,
+      status: 'error',
+      phase: 'READY',
+      error: {
+        code: 'invalid_state',
+        message: 'Complete the visible human review step before using this action.',
+      },
+    });
+
+    const canceled = new AbortController();
+    canceled.abort();
+    await expect(tools.get('stage_living_brief')!.execute(sampleBrief, {
+      signal: canceled.signal,
+    })).resolves.toMatchObject({
+      stateVersion: 1,
+      status: 'error',
+      error: { code: 'canceled' },
+    });
+    expect(store.getState()).toMatchObject({ phase: 'READY', stateVersion: 1, stagedBrief: null });
+  });
+
+
   it('exposes the five exact tools through the real state machine and visible render boundary', async () => {
     const store = createDecisionRoomStore();
     const tools = createWebMcpTools(store);

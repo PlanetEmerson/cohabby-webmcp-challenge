@@ -51,6 +51,14 @@ function livingContext(store: DecisionRoomStore) {
   return assertSafeToolOutput(context);
 }
 
+function invocationSignal(options?: WebMCP.ToolExecuteCallbackOptions): AbortSignal {
+  return options?.signal ?? new AbortController().signal;
+}
+
+function throwIfCanceled(signal: AbortSignal): void {
+  if (signal.aborted) throw new DecisionRoomError('canceled');
+}
+
 export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContextTool[] {
   return [
     {
@@ -74,8 +82,10 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
       description: 'Stage a practical living brief for the person to review and apply on this page.',
       inputSchema: toolInputSchemas.stage_living_brief,
       annotations: { readOnlyHint: false },
-      execute: async (input, { signal }) => {
+      execute: async (input, options) => {
+        const signal = invocationSignal(options);
         try {
+          throwIfCanceled(signal);
           const parsed = parseToolInput('stage_living_brief', input);
           const result = store.stageLivingBrief(parsed);
           await store.waitForRendered(result.stateVersion, signal);
@@ -99,8 +109,10 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
       description: 'Find synthetic demo rooms using the practical living brief the person approved on this page.',
       inputSchema: toolInputSchemas.find_compatible_rooms,
       annotations: { readOnlyHint: false, untrustedContentHint: true },
-      execute: async (input, { signal }) => {
+      execute: async (input, options) => {
+        const signal = invocationSignal(options);
         try {
+          throwIfCanceled(signal);
           const parsed = parseToolInput('find_compatible_rooms', input);
           const result = await store.findCompatibleRooms(parsed, signal);
           await store.waitForRendered(result.stateVersion, signal);
@@ -134,8 +146,10 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
       description: 'Build a comparison board from two or three room references in the current visible results.',
       inputSchema: toolInputSchemas.compare_shortlist,
       annotations: { readOnlyHint: false, untrustedContentHint: true },
-      execute: async (input, { signal }) => {
+      execute: async (input, options) => {
+        const signal = invocationSignal(options);
         try {
+          throwIfCanceled(signal);
           const parsed = parseToolInput('compare_shortlist', input);
           const result = store.compareShortlist(parsed);
           await store.waitForRendered(result.stateVersion, signal);
@@ -158,8 +172,10 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
       description: 'Prepare an editable demo introduction for one room in the current comparison.',
       inputSchema: toolInputSchemas.prepare_introduction,
       annotations: { readOnlyHint: false, untrustedContentHint: true },
-      execute: async (input, { signal }) => {
+      execute: async (input, options) => {
+        const signal = invocationSignal(options);
         try {
+          throwIfCanceled(signal);
           const parsed = parseToolInput('prepare_introduction', input);
           const result = store.prepareIntroduction(parsed);
           await store.waitForRendered(result.stateVersion, signal);
