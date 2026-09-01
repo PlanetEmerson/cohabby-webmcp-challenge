@@ -79,6 +79,40 @@ export function createDecisionRoomStore(dataSource: LivingDataSource = synthetic
 
   return {
     getState: () => state,
+    getWorkspaceSignal: () => workspaceController.signal,
+    createCheckpoint() {
+      return {
+        state,
+        proposalSequence,
+        resultGeneration,
+        introductionSequence,
+        receiptSequence,
+      };
+    },
+    rollbackToCheckpoint(
+      checkpoint: Readonly<{
+        state: DecisionRoomState;
+        proposalSequence: number;
+        resultGeneration: number;
+        introductionSequence: number;
+        receiptSequence: number;
+      }>,
+      expectedVersion: number,
+    ) {
+      if (
+        state.stateVersion !== expectedVersion
+        || state.workspaceGeneration !== checkpoint.state.workspaceGeneration
+      ) {
+        throw new DecisionRoomError('stale_execution');
+      }
+      proposalSequence = checkpoint.proposalSequence;
+      resultGeneration = checkpoint.resultGeneration;
+      introductionSequence = checkpoint.introductionSequence;
+      receiptSequence = checkpoint.receiptSequence;
+      const nextVersion = state.stateVersion + 1;
+      publish({ ...checkpoint.state, stateVersion: nextVersion });
+      return { stateVersion: nextVersion };
+    },
     subscribe: (listener: () => void) => {
       listeners.add(listener);
       return () => listeners.delete(listener);

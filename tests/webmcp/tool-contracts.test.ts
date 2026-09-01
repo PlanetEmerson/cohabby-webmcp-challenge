@@ -81,6 +81,26 @@ describe('WebMCP input contracts', () => {
     })).toThrowError(new ToolContractError('invalid_input'));
   });
 
+  it('rejects non-plain, accessor-backed, and trap-throwing input objects', () => {
+    class LivingPlanPayload {
+      market = 'New York';
+    }
+    const accessorPayload = Object.defineProperty({}, 'market', {
+      enumerable: true,
+      get: () => 'New York',
+    });
+    const trappedPayload = new Proxy({ market: 'New York' }, {
+      ownKeys: () => { throw new Error('proxy trap'); },
+    });
+
+    expect(() => parseToolInput('stage_living_brief', new LivingPlanPayload()))
+      .toThrowError(new ToolContractError('invalid_input'));
+    expect(() => parseToolInput('stage_living_brief', accessorPayload))
+      .toThrowError(new ToolContractError('invalid_input'));
+    expect(() => parseToolInput('stage_living_brief', trappedPayload))
+      .toThrowError(new ToolContractError('invalid_input'));
+  });
+
   it.each([
     ['stage_living_brief', {}],
     ['stage_living_brief', { market: 'N' }],

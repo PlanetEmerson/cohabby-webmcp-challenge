@@ -108,6 +108,104 @@ describe('Living Decision Room WebMCP tools', () => {
     expect(store.getState()).toMatchObject({ phase: 'READY', stateVersion: 1, stagedBrief: null });
   });
 
+  it('rolls back a mutation canceled while React is acknowledging the visible version', async () => {
+    const store = createDecisionRoomStore();
+    const stage = createWebMcpTools(store).find((tool) => tool.name === 'stage_living_brief')!;
+    const controller = new AbortController();
+    const pending = Promise.resolve(stage.execute(sampleBrief, { signal: controller.signal }));
+    await Promise.resolve();
+
+    expect(store.getState()).toMatchObject({ phase: 'BRIEF_STAGED', stateVersion: 2 });
+    controller.abort();
+    await expect(pending).resolves.toMatchObject({
+      stateVersion: 3,
+      phase: 'READY',
+      status: 'error',
+      error: { code: 'canceled' },
+    });
+    expect(store.getState()).toMatchObject({ phase: 'READY', stateVersion: 3, stagedBrief: null });
+  });
+
+  it('rolls back results, Synergy, comparison, and introduction mutations canceled at the render boundary', async () => {
+    const makeResultsStore = async () => {
+      const store = createDecisionRoomStore();
+      const staged = store.stageLivingBrief(sampleBrief);
+      store.applyBriefByHuman(staged.proposalRef);
+      await store.findCompatibleRooms({ limit: 6, order: 'best_fit' }, new AbortController().signal);
+      return store;
+    };
+
+    const findStore = createDecisionRoomStore();
+    const findStage = findStore.stageLivingBrief(sampleBrief);
+    findStore.applyBriefByHuman(findStage.proposalRef);
+    const findTool = createWebMcpTools(findStore).find((tool) => tool.name === 'find_compatible_rooms')!;
+    const findController = new AbortController();
+    const finding = Promise.resolve(findTool.execute({}, { signal: findController.signal }));
+    for (let index = 0; index < 5 && findStore.getState().phase !== 'RESULTS_READY'; index += 1) {
+      await Promise.resolve();
+    }
+    expect(findStore.getState().phase).toBe('RESULTS_READY');
+    findController.abort();
+    await expect(finding).resolves.toMatchObject({ status: 'error', error: { code: 'canceled' } });
+    expect(findStore.getState()).toMatchObject({ phase: 'BRIEF_APPLIED_BY_HUMAN', stateVersion: 5, results: null });
+
+    const explainStore = await makeResultsStore();
+    const explainTool = createWebMcpTools(explainStore).find((tool) => tool.name === 'explain_synergy_match')!;
+    const explainController = new AbortController();
+    const explaining = Promise.resolve(explainTool.execute(
+      { roomRef: 'room_nyc_cedar' },
+      { signal: explainController.signal },
+    ));
+    await Promise.resolve();
+    expect(explainStore.getState().phase).toBe('SYNERGY_EXPLAINED');
+    explainController.abort();
+    await expect(explaining).resolves.toMatchObject({ status: 'error', error: { code: 'canceled' } });
+    expect(explainStore.getState()).toMatchObject({ phase: 'RESULTS_READY', stateVersion: 6, synergyExplanation: null });
+
+    const compareStore = await makeResultsStore();
+    const compareTool = createWebMcpTools(compareStore).find((tool) => tool.name === 'compare_shortlist')!;
+    const compareController = new AbortController();
+    const comparing = Promise.resolve(compareTool.execute(
+      { roomRefs: ['room_nyc_cedar', 'room_nyc_hudson'] },
+      { signal: compareController.signal },
+    ));
+    await Promise.resolve();
+    expect(compareStore.getState().phase).toBe('COMPARISON_READY');
+    compareController.abort();
+    await expect(comparing).resolves.toMatchObject({ status: 'error', error: { code: 'canceled' } });
+    expect(compareStore.getState()).toMatchObject({ phase: 'RESULTS_READY', stateVersion: 6, comparison: null });
+
+    const prepareStore = await makeResultsStore();
+    prepareStore.compareShortlist({ roomRefs: ['room_nyc_cedar', 'room_nyc_hudson'] });
+    const prepareTool = createWebMcpTools(prepareStore).find((tool) => tool.name === 'prepare_introduction')!;
+    const prepareController = new AbortController();
+    const preparing = Promise.resolve(prepareTool.execute(
+      { roomRef: 'room_nyc_cedar', tone: 'warm' },
+      { signal: prepareController.signal },
+    ));
+    await Promise.resolve();
+    expect(prepareStore.getState().phase).toBe('INTRODUCTION_STAGED');
+    prepareController.abort();
+    await expect(preparing).resolves.toMatchObject({ status: 'error', error: { code: 'canceled' } });
+    expect(prepareStore.getState()).toMatchObject({ phase: 'COMPARISON_READY', stateVersion: 7, introduction: null });
+  });
+
+  it('lets a human reset win over an invocation waiting for render acknowledgement', async () => {
+    const store = createDecisionRoomStore();
+    const stage = createWebMcpTools(store).find((tool) => tool.name === 'stage_living_brief')!;
+    const pending = Promise.resolve(stage.execute(sampleBrief, { signal: new AbortController().signal }));
+    await Promise.resolve();
+    store.resetByHuman();
+
+    await expect(pending).resolves.toMatchObject({
+      stateVersion: 3,
+      phase: 'READY',
+      status: 'error',
+      error: { code: 'stale_execution' },
+    });
+    expect(store.getState()).toMatchObject({ phase: 'READY', stateVersion: 3, workspaceGeneration: 2 });
+  });
+
 
   it('exposes the six exact tools through the real state machine and visible render boundary', async () => {
     const store = createDecisionRoomStore();

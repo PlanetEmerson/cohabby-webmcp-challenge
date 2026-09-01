@@ -70,8 +70,41 @@ function invocationSignal(options?: WebMCP.ToolExecuteCallbackOptions): AbortSig
   return options?.signal ?? new AbortController().signal;
 }
 
+function invocationScope(
+  store: DecisionRoomStore,
+  options?: WebMCP.ToolExecuteCallbackOptions,
+) {
+  const controller = new AbortController();
+  const signals = [invocationSignal(options), store.getWorkspaceSignal()];
+  const abort = () => controller.abort();
+  signals.forEach((signal) => {
+    if (signal.aborted) controller.abort();
+    else signal.addEventListener('abort', abort, { once: true });
+  });
+  return {
+    signal: controller.signal,
+    dispose: () => signals.forEach((signal) => signal.removeEventListener('abort', abort)),
+  };
+}
+
 function throwIfCanceled(signal: AbortSignal): void {
   if (signal.aborted) throw new DecisionRoomError('canceled');
+}
+
+async function waitForVisibleMutation(
+  store: DecisionRoomStore,
+  checkpoint: ReturnType<DecisionRoomStore['createCheckpoint']>,
+  stateVersion: number,
+  signal: AbortSignal,
+): Promise<void> {
+  try {
+    await store.waitForRendered(stateVersion, signal);
+  } catch (error) {
+    if (errorCode(error) === 'canceled') {
+      store.rollbackToCheckpoint(checkpoint, stateVersion);
+    }
+    throw error;
+  }
 }
 
 export function createWebMcpTools(
@@ -110,12 +143,14 @@ export function createWebMcpTools(
       annotations: { readOnlyHint: false },
       execute: async (input, options) => {
         const token = activity?.begin('agent', 'stage_living_brief');
-        const signal = invocationSignal(options);
+        const operation = invocationScope(store, options);
+        const signal = operation.signal;
         try {
           throwIfCanceled(signal);
           const parsed = parseToolInput('stage_living_brief', input);
+          const checkpoint = store.createCheckpoint();
           const result = store.stageLivingBrief(parsed);
-          await store.waitForRendered(result.stateVersion, signal);
+          await waitForVisibleMutation(store, checkpoint, result.stateVersion, signal);
           if (token) {
             activity?.complete(token, {
               stateVersion: result.stateVersion,
@@ -133,6 +168,8 @@ export function createWebMcpTools(
           });
         } catch (error) {
           return failure('stage_living_brief', store, error, activity, token);
+        } finally {
+          operation.dispose();
         }
       },
     },
@@ -144,12 +181,14 @@ export function createWebMcpTools(
       annotations: { readOnlyHint: false, untrustedContentHint: true },
       execute: async (input, options) => {
         const token = activity?.begin('agent', 'find_compatible_rooms');
-        const signal = invocationSignal(options);
+        const operation = invocationScope(store, options);
+        const signal = operation.signal;
         try {
           throwIfCanceled(signal);
           const parsed = parseToolInput('find_compatible_rooms', input);
+          const checkpoint = store.createCheckpoint();
           const result = await store.findCompatibleRooms(parsed, signal);
-          await store.waitForRendered(result.stateVersion, signal);
+          await waitForVisibleMutation(store, checkpoint, result.stateVersion, signal);
           if (token) {
             activity?.complete(token, {
               stateVersion: result.stateVersion,
@@ -177,6 +216,8 @@ export function createWebMcpTools(
           });
         } catch (error) {
           return failure('find_compatible_rooms', store, error, activity, token);
+        } finally {
+          operation.dispose();
         }
       },
     },
@@ -188,12 +229,14 @@ export function createWebMcpTools(
       annotations: { readOnlyHint: false, untrustedContentHint: true },
       execute: async (input, options) => {
         const token = activity?.begin('agent', 'explain_synergy_match');
-        const signal = invocationSignal(options);
+        const operation = invocationScope(store, options);
+        const signal = operation.signal;
         try {
           throwIfCanceled(signal);
           const parsed = parseToolInput('explain_synergy_match', input);
+          const checkpoint = store.createCheckpoint();
           const result = store.explainSynergyMatch(parsed);
-          await store.waitForRendered(result.stateVersion, signal);
+          await waitForVisibleMutation(store, checkpoint, result.stateVersion, signal);
           const explanation = store.getState().synergyExplanation;
           if (!explanation) throw new DecisionRoomError('stale_execution');
           if (token) {
@@ -220,6 +263,8 @@ export function createWebMcpTools(
           });
         } catch (error) {
           return failure('explain_synergy_match', store, error, activity, token);
+        } finally {
+          operation.dispose();
         }
       },
     },
@@ -231,12 +276,14 @@ export function createWebMcpTools(
       annotations: { readOnlyHint: false, untrustedContentHint: true },
       execute: async (input, options) => {
         const token = activity?.begin('agent', 'compare_shortlist');
-        const signal = invocationSignal(options);
+        const operation = invocationScope(store, options);
+        const signal = operation.signal;
         try {
           throwIfCanceled(signal);
           const parsed = parseToolInput('compare_shortlist', input);
+          const checkpoint = store.createCheckpoint();
           const result = store.compareShortlist(parsed);
-          await store.waitForRendered(result.stateVersion, signal);
+          await waitForVisibleMutation(store, checkpoint, result.stateVersion, signal);
           if (token) {
             activity?.complete(token, {
               stateVersion: result.stateVersion,
@@ -253,6 +300,8 @@ export function createWebMcpTools(
           });
         } catch (error) {
           return failure('compare_shortlist', store, error, activity, token);
+        } finally {
+          operation.dispose();
         }
       },
     },
@@ -264,12 +313,14 @@ export function createWebMcpTools(
       annotations: { readOnlyHint: false, untrustedContentHint: true },
       execute: async (input, options) => {
         const token = activity?.begin('agent', 'prepare_introduction');
-        const signal = invocationSignal(options);
+        const operation = invocationScope(store, options);
+        const signal = operation.signal;
         try {
           throwIfCanceled(signal);
           const parsed = parseToolInput('prepare_introduction', input);
+          const checkpoint = store.createCheckpoint();
           const result = store.prepareIntroduction(parsed);
-          await store.waitForRendered(result.stateVersion, signal);
+          await waitForVisibleMutation(store, checkpoint, result.stateVersion, signal);
           if (token) {
             activity?.complete(token, {
               stateVersion: result.stateVersion,
@@ -290,6 +341,8 @@ export function createWebMcpTools(
           });
         } catch (error) {
           return failure('prepare_introduction', store, error, activity, token);
+        } finally {
+          operation.dispose();
         }
       },
     },
