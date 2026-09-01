@@ -1,7 +1,8 @@
+import { DecisionRoom } from '@/components/decision-room/decision-room';
+
 export default function Home() {
-  return (
-    <main>
-      <div>Hello world!</div>
-    </main>
-  );
+  const sourceRevision = process.env.SOURCE_COMMIT_SHA
+    ?? process.env.VERCEL_GIT_COMMIT_SHA
+    ?? 'local';
+  return <DecisionRoom sourceRevision={sourceRevision} />;
 }
