@@ -153,6 +153,52 @@ describe('DecisionRoomStore', () => {
     });
   });
 
+  it('opens one current synthetic Synergy explanation and can compare from that visible phase', async () => {
+    const store = createDecisionRoomStore();
+    const staged = store.stageLivingBrief(sampleBrief);
+    store.applyBriefByHuman(staged.proposalRef);
+    await store.findCompatibleRooms({ limit: 6, order: 'best_fit' }, new AbortController().signal);
+
+    expect(store.explainSynergyMatch({ roomRef: 'room_nyc_cedar' })).toEqual({
+      roomRef: 'room_nyc_cedar',
+      personRef: 'person_demo_maya',
+      stateVersion: 5,
+    });
+    expect(store.getState()).toMatchObject({
+      phase: 'SYNERGY_EXPLAINED',
+      stateVersion: 5,
+      synergyExplanation: {
+        roomRef: 'room_nyc_cedar',
+        personRef: 'person_demo_maya',
+        score: 92,
+      },
+    });
+
+    expect(store.compareShortlist({
+      roomRefs: ['room_nyc_cedar', 'room_nyc_hudson'],
+      dimensions: ['synergy_read', 'home_rhythm'],
+    })).toEqual({
+      roomRefs: ['room_nyc_cedar', 'room_nyc_hudson'],
+      dimensions: ['synergy_read', 'home_rhythm'],
+      stateVersion: 6,
+    });
+    expect(store.getState()).toMatchObject({
+      phase: 'COMPARISON_READY',
+      synergyExplanation: null,
+    });
+  });
+
+  it('rejects stale Synergy references without changing the current result state', async () => {
+    const store = createDecisionRoomStore();
+    const staged = store.stageLivingBrief(sampleBrief);
+    store.applyBriefByHuman(staged.proposalRef);
+    await store.findCompatibleRooms({ limit: 6, order: 'best_fit' }, new AbortController().signal);
+
+    expect(() => store.explainSynergyMatch({ roomRef: 'room_ams_canal' }))
+      .toThrowError(new DecisionRoomError('stale_reference'));
+    expect(store.getState()).toMatchObject({ phase: 'RESULTS_READY', stateVersion: 4, synergyExplanation: null });
+  });
+
   it('keeps contact details out of a human-confirmed demo introduction', async () => {
     const store = createDecisionRoomStore();
     const staged = store.stageLivingBrief(sampleBrief);

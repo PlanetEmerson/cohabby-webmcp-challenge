@@ -4,6 +4,7 @@ export type LivingMatchboardStage =
   | 'ready'
   | 'brief'
   | 'rooms'
+  | 'synergy'
   | 'comparison'
   | 'introduction'
   | 'confirmed';
@@ -17,6 +18,8 @@ export function visualStageForPhase(phase: DecisionRoomPhase): LivingMatchboardS
       return 'brief';
     case 'RESULTS_READY':
       return 'rooms';
+    case 'SYNERGY_EXPLAINED':
+      return 'synergy';
     case 'COMPARISON_READY':
       return 'comparison';
     case 'INTRODUCTION_STAGED':

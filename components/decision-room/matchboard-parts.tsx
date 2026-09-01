@@ -40,6 +40,9 @@ const optionLabels: Record<string, string> = {
   strong: 'Strong fit',
   good: 'Good fit',
   possible: 'Possible fit',
+  strong_read: 'Strong read',
+  good_read: 'Good read',
+  early_read: 'Early read',
 };
 
 export function label(value: unknown): string {
@@ -282,6 +285,7 @@ export function ComparisonStage({
   dimensions: ComparisonBoard['dimensions'];
 }) {
   const rowByDimension = {
+    synergy_read: { label: 'Synthetic Synergy', icon: Check, read: (room: SafeRoomSummary) => `${room.synergy.score} · ${label(room.synergy.readLabel)}` },
     budget: { label: 'Monthly price', icon: BadgeDollarSign, read: (room: SafeRoomSummary) => money(room) },
     move_timing: { label: 'Move timing', icon: Clock3, read: (room: SafeRoomSummary) => label(room.availableWindow) },
     home_rhythm: { label: 'Home rhythm', icon: MoonStar, read: (room: SafeRoomSummary) => reasonFor(room, 'quiet_time_fit', 'No matching rhythm listed') },

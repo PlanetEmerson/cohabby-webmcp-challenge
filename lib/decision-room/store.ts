@@ -1,5 +1,6 @@
 import type {
   CompareShortlistInput,
+  ExplainSynergyMatchInput,
   FindCompatibleRoomsInput,
   PrepareIntroductionInput,
   StageLivingBriefInput,
@@ -10,7 +11,7 @@ import {
   type LivingDataSource,
 } from './living-data-source';
 import { buildIntroductionDraft, isSafeIntroductionDraft } from './introduction-template';
-import type { DecisionRoomState, StagedLivingBriefProposal } from './types';
+import type { DecisionRoomState, SafeReasonCode, StagedLivingBriefProposal } from './types';
 
 export class DecisionRoomError extends Error {
   readonly code: ToolErrorCode;
@@ -30,6 +31,7 @@ const initialState = (): DecisionRoomState => ({
   appliedBrief: null,
   stagedBrief: null,
   results: null,
+  synergyExplanation: null,
   comparison: null,
   introduction: null,
   receipt: null,
@@ -186,6 +188,7 @@ export function createDecisionRoomStore(dataSource: LivingDataSource = synthetic
       if (
         state.phase !== 'BRIEF_APPLIED_BY_HUMAN'
         && state.phase !== 'RESULTS_READY'
+        && state.phase !== 'SYNERGY_EXPLAINED'
         && state.phase !== 'COMPARISON_READY'
         && state.phase !== 'INTRODUCTION_STAGED'
         && state.phase !== 'INTRODUCTION_CONFIRMED_BY_HUMAN'
@@ -242,6 +245,7 @@ export function createDecisionRoomStore(dataSource: LivingDataSource = synthetic
           request,
           rooms: result.rooms,
         },
+        synergyExplanation: null,
         comparison: null,
         introduction: null,
         receipt: null,
@@ -256,9 +260,43 @@ export function createDecisionRoomStore(dataSource: LivingDataSource = synthetic
         visibleRoomRefs: result.rooms.map((room) => room.roomRef),
       };
     },
+    explainSynergyMatch(input: ExplainSynergyMatchInput) {
+      if (state.phase !== 'RESULTS_READY' && state.phase !== 'SYNERGY_EXPLAINED') {
+        throw new DecisionRoomError('invalid_state');
+      }
+      if (!state.results) throw new DecisionRoomError('invalid_state');
+      const room = state.results.rooms.find((candidate) => candidate.roomRef === input.roomRef);
+      if (!room) throw new DecisionRoomError('stale_reference');
+      const nextVersion = state.stateVersion + 1;
+      publish({
+        ...state,
+        stateVersion: nextVersion,
+        phase: 'SYNERGY_EXPLAINED',
+        synergyExplanation: {
+          roomRef: room.roomRef,
+          personRef: room.housemate.personRef,
+          displayName: room.housemate.displayName,
+          score: room.synergy.score,
+          evidencePercent: room.synergy.evidencePercent,
+          readLabel: room.synergy.readLabel,
+          reasonCodes: [...room.synergy.reasonCodes],
+          reasonLabels: [...room.synergy.reasonLabels],
+        },
+        comparison: null,
+        introduction: null,
+        receipt: null,
+        notice: null,
+      });
+      return {
+        roomRef: room.roomRef,
+        personRef: room.housemate.personRef,
+        stateVersion: nextVersion,
+      };
+    },
     compareShortlist(input: CompareShortlistInput) {
       if (
         state.phase !== 'RESULTS_READY'
+        && state.phase !== 'SYNERGY_EXPLAINED'
         && state.phase !== 'COMPARISON_READY'
         && state.phase !== 'INTRODUCTION_STAGED'
         && state.phase !== 'INTRODUCTION_CONFIRMED_BY_HUMAN'
@@ -274,12 +312,13 @@ export function createDecisionRoomStore(dataSource: LivingDataSource = synthetic
       }
       const dimensions: NonNullable<CompareShortlistInput['dimensions']> = input.dimensions
         ? [...input.dimensions]
-        : ['budget', 'move_timing', 'home_rhythm', 'house_rules', 'practical_fit'];
+        : ['synergy_read', 'budget', 'move_timing', 'home_rhythm', 'house_rules', 'practical_fit'];
       const nextVersion = state.stateVersion + 1;
       publish({
         ...state,
         stateVersion: nextVersion,
         phase: 'COMPARISON_READY',
+        synergyExplanation: null,
         comparison: { roomRefs, dimensions },
         introduction: null,
         receipt: null,
@@ -298,10 +337,11 @@ export function createDecisionRoomStore(dataSource: LivingDataSource = synthetic
       }
       const room = state.results.rooms.find((candidate) => candidate.roomRef === input.roomRef);
       if (!room) throw new DecisionRoomError('stale_reference');
-      const highlightCodes = input.highlightCodes?.length
+      const availableReasonCodes: SafeReasonCode[] = [...room.reasonCodes, ...room.synergy.reasonCodes];
+      const highlightCodes: SafeReasonCode[] = input.highlightCodes?.length
         ? [...input.highlightCodes]
-        : room.reasonCodes.slice(0, 3);
-      if (highlightCodes.some((code) => !room.reasonCodes.includes(code))) {
+        : [...room.synergy.reasonCodes.slice(0, 2), ...room.reasonCodes.slice(0, 1)];
+      if (highlightCodes.some((code) => !availableReasonCodes.includes(code))) {
         throw new DecisionRoomError('invalid_input');
       }
       introductionSequence += 1;

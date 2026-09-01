@@ -16,6 +16,12 @@ const rooms: SafeRoomSummary[] = [
     fitBand: 'strong',
     reasonCodes: ['budget_fit', 'house_rules_fit'],
     reasonLabels: ['Within the approved budget', 'Shared-home rules support the brief'],
+    housemate: { personRef: 'person_demo_maya', displayName: 'Maya', homeLine: 'Quiet mornings + tidy kitchen', housingPath: 'has_room' },
+    synergy: {
+      source: 'synthetic_fixture', score: 92, evidencePercent: 88, readLabel: 'strong_read',
+      reasonCodes: ['daily_rhythm_fit', 'shared_space_fit', 'household_boundaries_fit'],
+      reasonLabels: ['Both prefer quiet mornings', 'Both value tidy shared spaces', 'Clear household boundaries align'],
+    },
   },
   {
     roomRef: 'room_nyc_hudson',
@@ -28,6 +34,12 @@ const rooms: SafeRoomSummary[] = [
     fitBand: 'strong',
     reasonCodes: ['budget_fit', 'house_rules_fit'],
     reasonLabels: ['Within the approved budget', 'Shared-home rules support the brief'],
+    housemate: { personRef: 'person_demo_jordan', displayName: 'Jordan', homeLine: 'Cat-friendly + clear boundaries', housingPath: 'has_room' },
+    synergy: {
+      source: 'synthetic_fixture', score: 87, evidencePercent: 82, readLabel: 'strong_read',
+      reasonCodes: ['daily_rhythm_fit', 'shared_space_fit', 'household_boundaries_fit'],
+      reasonLabels: ['Calm evening rhythms align', 'Both care for shared spaces', 'Guest and pet boundaries are clear'],
+    },
   },
 ];
 

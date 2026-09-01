@@ -39,7 +39,7 @@ describe('WebMCP registration lifecycle', () => {
     expect([...context.active]).toEqual(tools.map((tool) => tool.name));
 
     first.dispose();
-    expect(context.active.size).toBe(5);
+    expect(context.active.size).toBe(6);
     second.dispose();
     expect(context.active.size).toBe(0);
   });

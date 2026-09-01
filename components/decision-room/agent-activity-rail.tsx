@@ -20,17 +20,19 @@ const phaseRank: Record<DecisionRoomPhase, number> = {
   BRIEF_STAGED: 1,
   BRIEF_APPLIED_BY_HUMAN: 1,
   RESULTS_READY: 2,
-  COMPARISON_READY: 3,
-  INTRODUCTION_STAGED: 4,
-  INTRODUCTION_CONFIRMED_BY_HUMAN: 5,
+  SYNERGY_EXPLAINED: 3,
+  COMPARISON_READY: 4,
+  INTRODUCTION_STAGED: 5,
+  INTRODUCTION_CONFIRMED_BY_HUMAN: 6,
 };
 
 const steps = [
-  { action: 'get_living_context', label: 'Read the room', tool: 'get_living_context', icon: ScanSearch, rank: 0 },
-  { action: 'stage_living_brief', label: 'Build a brief', tool: 'stage_living_brief', icon: FilePenLine, rank: 1 },
-  { action: 'find_compatible_rooms', label: 'Find rooms', tool: 'find_compatible_rooms', icon: Search, rank: 2 },
-  { action: 'compare_shortlist', label: 'Line them up', tool: 'compare_shortlist', icon: ListFilter, rank: 3 },
-  { action: 'prepare_introduction', label: 'Prepare a note', tool: 'prepare_introduction', icon: MessageSquareText, rank: 4 },
+  { action: 'get_living_context', label: 'Read your style', tool: 'get_living_context', icon: ScanSearch, rank: 0 },
+  { action: 'stage_living_brief', label: 'Set must-haves', tool: 'stage_living_brief', icon: FilePenLine, rank: 1 },
+  { action: 'find_compatible_rooms', label: 'Find people + homes', tool: 'find_compatible_rooms', icon: Search, rank: 2 },
+  { action: 'explain_synergy_match', label: 'Explain Synergy', tool: 'explain_synergy_match', icon: ScanSearch, rank: 3 },
+  { action: 'compare_shortlist', label: 'Compare life together', tool: 'compare_shortlist', icon: ListFilter, rank: 4 },
+  { action: 'prepare_introduction', label: 'Write first hello', tool: 'prepare_introduction', icon: MessageSquareText, rank: 5 },
 ] as const;
 
 function activityMessage(activity: DecisionRoomActivitySnapshot): string {
@@ -45,7 +47,9 @@ function activityMessage(activity: DecisionRoomActivitySnapshot): string {
     case 'stage_living_brief':
       return 'Brief ready for your review.';
     case 'find_compatible_rooms':
-      return `${activity.targetRefs.length} rooms landed on the table.`;
+      return `${activity.targetRefs.length} people + homes added to your page.`;
+    case 'explain_synergy_match':
+      return 'Synthetic Synergy explanation ready.';
     case 'compare_shortlist':
       return `${activity.targetRefs.length} rooms lined up.`;
     case 'prepare_introduction':
@@ -102,7 +106,7 @@ export function AgentActivityRail({
           const completed = rank > step.rank
             || (rank === step.rank && step.rank > 0)
             || (step.rank === 0 && activity.action === step.action && activity.status === 'complete');
-          const isNext = !completed && step.rank === Math.min(rank + (rank === 0 ? 0 : 1), 4);
+          const isNext = !completed && step.rank === Math.min(rank + (rank === 0 ? 0 : 1), 5);
           return (
             <li
               key={step.action}

@@ -24,6 +24,9 @@ export const safeReasonCodes = [
   'smoke_free_fit',
   'quiet_time_fit',
   'house_rules_fit',
+  'daily_rhythm_fit',
+  'shared_space_fit',
+  'household_boundaries_fit',
 ] as const;
 
 export const getLivingContextInputSchema = {
@@ -37,6 +40,15 @@ export const findCompatibleRoomsInputSchema = {
   properties: {
     limit: { type: 'integer', minimum: 1, maximum: 6 },
     order: { type: 'string', enum: ['best_fit', 'lowest_price', 'soonest_move'] },
+  },
+  additionalProperties: false,
+} as const;
+
+export const explainSynergyMatchInputSchema = {
+  type: 'object',
+  required: ['roomRef'],
+  properties: {
+    roomRef: { type: 'string', pattern: '^room_[a-z0-9_]{3,48}$' },
   },
   additionalProperties: false,
 } as const;
@@ -55,11 +67,11 @@ export const compareShortlistInputSchema = {
     dimensions: {
       type: 'array',
       minItems: 1,
-      maxItems: 5,
+      maxItems: 6,
       uniqueItems: true,
       items: {
         type: 'string',
-        enum: ['budget', 'move_timing', 'home_rhythm', 'house_rules', 'practical_fit'],
+        enum: ['synergy_read', 'budget', 'move_timing', 'home_rhythm', 'house_rules', 'practical_fit'],
       },
     },
   },
@@ -85,12 +97,14 @@ export const prepareIntroductionInputSchema = {
 export type StageLivingBriefInput = FromSchema<typeof stageLivingBriefInputSchema>;
 export type GetLivingContextInput = FromSchema<typeof getLivingContextInputSchema>;
 export type FindCompatibleRoomsInput = FromSchema<typeof findCompatibleRoomsInputSchema>;
+export type ExplainSynergyMatchInput = FromSchema<typeof explainSynergyMatchInputSchema>;
 export type CompareShortlistInput = FromSchema<typeof compareShortlistInputSchema>;
 export type PrepareIntroductionInput = FromSchema<typeof prepareIntroductionInputSchema>;
 export type ToolName =
   | 'get_living_context'
   | 'stage_living_brief'
   | 'find_compatible_rooms'
+  | 'explain_synergy_match'
   | 'compare_shortlist'
   | 'prepare_introduction';
 
@@ -98,6 +112,7 @@ export type ToolInputMap = {
   get_living_context: GetLivingContextInput;
   stage_living_brief: StageLivingBriefInput;
   find_compatible_rooms: FindCompatibleRoomsInput;
+  explain_synergy_match: ExplainSynergyMatchInput;
   compare_shortlist: CompareShortlistInput;
   prepare_introduction: PrepareIntroductionInput;
 };
@@ -106,6 +121,7 @@ export const toolInputSchemas = {
   get_living_context: getLivingContextInputSchema,
   stage_living_brief: stageLivingBriefInputSchema,
   find_compatible_rooms: findCompatibleRoomsInputSchema,
+  explain_synergy_match: explainSynergyMatchInputSchema,
   compare_shortlist: compareShortlistInputSchema,
   prepare_introduction: prepareIntroductionInputSchema,
 } as const;

@@ -10,6 +10,7 @@ export type DecisionRoomPhase =
   | 'BRIEF_STAGED'
   | 'BRIEF_APPLIED_BY_HUMAN'
   | 'RESULTS_READY'
+  | 'SYNERGY_EXPLAINED'
   | 'COMPARISON_READY'
   | 'INTRODUCTION_STAGED'
   | 'INTRODUCTION_CONFIRMED_BY_HUMAN';
@@ -29,7 +30,31 @@ export type SafeReasonCode =
   | 'pet_fit'
   | 'smoke_free_fit'
   | 'quiet_time_fit'
-  | 'house_rules_fit';
+  | 'house_rules_fit'
+  | 'daily_rhythm_fit'
+  | 'shared_space_fit'
+  | 'household_boundaries_fit';
+
+export type SafeSynergyReasonCode =
+  | 'daily_rhythm_fit'
+  | 'shared_space_fit'
+  | 'household_boundaries_fit';
+
+export type SafeHousemateSummary = Readonly<{
+  personRef: string;
+  displayName: string;
+  homeLine: string;
+  housingPath: 'has_room' | 'searching_together';
+}>;
+
+export type SafeSynergyRead = Readonly<{
+  source: 'synthetic_fixture';
+  score: number;
+  evidencePercent: number;
+  readLabel: 'strong_read' | 'good_read' | 'early_read';
+  reasonCodes: ReadonlyArray<SafeSynergyReasonCode>;
+  reasonLabels: ReadonlyArray<string>;
+}>;
 
 export type SafeRoomSummary = Readonly<{
   roomRef: string;
@@ -41,6 +66,19 @@ export type SafeRoomSummary = Readonly<{
   homeType: 'room_in_shared_home' | 'entire_place';
   fitBand: 'strong' | 'good' | 'possible';
   reasonCodes: ReadonlyArray<SafeReasonCode>;
+  reasonLabels: ReadonlyArray<string>;
+  housemate: SafeHousemateSummary;
+  synergy: SafeSynergyRead;
+}>;
+
+export type SynergyExplanation = Readonly<{
+  roomRef: string;
+  personRef: string;
+  displayName: string;
+  score: number;
+  evidencePercent: number;
+  readLabel: SafeSynergyRead['readLabel'];
+  reasonCodes: ReadonlyArray<SafeSynergyReasonCode>;
   reasonLabels: ReadonlyArray<string>;
 }>;
 
@@ -82,6 +120,7 @@ export type DecisionRoomState = Readonly<{
   appliedBrief: AppliedLivingBrief | null;
   stagedBrief: StagedLivingBriefProposal | null;
   results: RoomResults | null;
+  synergyExplanation: SynergyExplanation | null;
   comparison: ComparisonBoard | null;
   introduction: StagedIntroduction | null;
   receipt: DemoReceipt | null;

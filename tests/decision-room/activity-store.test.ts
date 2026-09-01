@@ -44,4 +44,18 @@ describe('Decision Room activity store', () => {
       stateVersion: 8,
     });
   });
+
+  it('records the synthetic Synergy explanation as its own visible browser-agent action', () => {
+    const store = createDecisionRoomActivityStore();
+    const token = store.begin('agent', 'explain_synergy_match');
+    store.complete(token, { stateVersion: 5, targetRefs: ['room_nyc_cedar'] });
+
+    expect(store.getSnapshot()).toMatchObject({
+      actor: 'agent',
+      action: 'explain_synergy_match',
+      status: 'complete',
+      stateVersion: 5,
+      targetRefs: ['room_nyc_cedar'],
+    });
+  });
 });

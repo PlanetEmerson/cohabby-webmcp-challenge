@@ -3,13 +3,14 @@ import type {
   DecisionRoomActivityToken,
 } from '@/lib/decision-room/activity-store';
 import { DecisionRoomError, type DecisionRoomStore } from '@/lib/decision-room/store';
-import type { ToolErrorCode } from './tool-contracts';
+import { demoProfileSignals } from '@/lib/decision-room/living-data-source';
+import type { ToolErrorCode, ToolName } from './tool-contracts';
 import {
   parseToolInput,
   toolInputSchemas,
   ToolContractError,
 } from './tool-contracts';
-import { assertSafeToolOutput } from './safe-output';
+import { assertToolOutput } from './output-contracts';
 
 const errorMessages: Record<ToolErrorCode, string> = {
   invalid_input: 'Use only the supported practical living fields and values.',
@@ -29,6 +30,7 @@ function errorCode(error: unknown): ToolErrorCode {
 }
 
 function failure(
+  name: ToolName,
   store: DecisionRoomStore,
   error: unknown,
   activity?: DecisionRoomActivityStore,
@@ -37,7 +39,7 @@ function failure(
   const state = store.getState();
   const code = errorCode(error);
   if (token) activity?.fail(token, code, state.stateVersion);
-  return assertSafeToolOutput({
+  return assertToolOutput(name, {
     schemaVersion: 1,
     stateVersion: state.stateVersion,
     status: 'error',
@@ -54,11 +56,14 @@ function livingContext(store: DecisionRoomStore) {
     status: 'ready',
     phase: state.phase,
     ...(state.appliedBrief ? { brief: state.appliedBrief } : {}),
+    visibleProfileSignals: [...demoProfileSignals],
     visibleRoomRefs: state.results?.rooms.map((room) => room.roomRef) ?? [],
+    synergyExplanationStatus: state.synergyExplanation ? 'visible' : 'none',
+    ...(state.synergyExplanation ? { focusedSynergyRoomRef: state.synergyExplanation.roomRef } : {}),
     shortlistCount: state.comparison?.roomRefs.length ?? 0,
     introductionStatus: state.receipt ? 'confirmed' : state.introduction ? 'staged' : 'none',
   };
-  return assertSafeToolOutput(context);
+  return assertToolOutput('get_living_context', context);
 }
 
 function invocationSignal(options?: WebMCP.ToolExecuteCallbackOptions): AbortSignal {
@@ -93,7 +98,7 @@ export function createWebMcpTools(
           }
           return result;
         } catch (error) {
-          return failure(store, error, activity, token);
+          return failure('get_living_context', store, error, activity, token);
         }
       },
     },
@@ -117,7 +122,7 @@ export function createWebMcpTools(
               targetRefs: [result.proposalRef],
             });
           }
-          return assertSafeToolOutput({
+          return assertToolOutput('stage_living_brief', {
             schemaVersion: 1,
             stateVersion: result.stateVersion,
             status: 'awaiting_human_review',
@@ -127,7 +132,7 @@ export function createWebMcpTools(
             visibleConfirmation: true,
           });
         } catch (error) {
-          return failure(store, error, activity, token);
+          return failure('stage_living_brief', store, error, activity, token);
         }
       },
     },
@@ -152,7 +157,7 @@ export function createWebMcpTools(
             });
           }
           if (result.status === 'unsupported_market') {
-            return assertSafeToolOutput({
+            return assertToolOutput('find_compatible_rooms', {
               schemaVersion: 1,
               stateVersion: result.stateVersion,
               status: 'unsupported_market',
@@ -161,7 +166,7 @@ export function createWebMcpTools(
             });
           }
           const state = store.getState();
-          return assertSafeToolOutput({
+          return assertToolOutput('find_compatible_rooms', {
             schemaVersion: 1,
             stateVersion: result.stateVersion,
             status: result.status,
@@ -171,7 +176,50 @@ export function createWebMcpTools(
             rooms: state.results?.rooms ?? [],
           });
         } catch (error) {
-          return failure(store, error, activity, token);
+          return failure('find_compatible_rooms', store, error, activity, token);
+        }
+      },
+    },
+    {
+      name: 'explain_synergy_match',
+      title: 'Explain Synergy match',
+      description: 'Open the visible synthetic Synergy explanation for one current people-and-home match.',
+      inputSchema: toolInputSchemas.explain_synergy_match,
+      annotations: { readOnlyHint: false, untrustedContentHint: true },
+      execute: async (input, options) => {
+        const token = activity?.begin('agent', 'explain_synergy_match');
+        const signal = invocationSignal(options);
+        try {
+          throwIfCanceled(signal);
+          const parsed = parseToolInput('explain_synergy_match', input);
+          const result = store.explainSynergyMatch(parsed);
+          await store.waitForRendered(result.stateVersion, signal);
+          const explanation = store.getState().synergyExplanation;
+          if (!explanation) throw new DecisionRoomError('stale_execution');
+          if (token) {
+            activity?.complete(token, {
+              stateVersion: result.stateVersion,
+              targetRefs: [result.roomRef],
+            });
+          }
+          return assertToolOutput('explain_synergy_match', {
+            schemaVersion: 1,
+            stateVersion: result.stateVersion,
+            status: 'synergy_explanation_ready',
+            phase: store.getState().phase,
+            roomRef: explanation.roomRef,
+            personRef: explanation.personRef,
+            displayName: explanation.displayName,
+            scoreSource: 'synthetic_fixture',
+            score: explanation.score,
+            evidencePercent: explanation.evidencePercent,
+            readLabel: explanation.readLabel,
+            reasonCodes: explanation.reasonCodes,
+            reasonLabels: explanation.reasonLabels,
+            visibleExplanation: true,
+          });
+        } catch (error) {
+          return failure('explain_synergy_match', store, error, activity, token);
         }
       },
     },
@@ -195,7 +243,7 @@ export function createWebMcpTools(
               targetRefs: result.roomRefs,
             });
           }
-          return assertSafeToolOutput({
+          return assertToolOutput('compare_shortlist', {
             schemaVersion: 1,
             stateVersion: result.stateVersion,
             status: 'comparison_ready',
@@ -204,7 +252,7 @@ export function createWebMcpTools(
             dimensions: result.dimensions,
           });
         } catch (error) {
-          return failure(store, error, activity, token);
+          return failure('compare_shortlist', store, error, activity, token);
         }
       },
     },
@@ -229,7 +277,7 @@ export function createWebMcpTools(
             });
           }
           const introduction = store.getState().introduction;
-          return assertSafeToolOutput({
+          return assertToolOutput('prepare_introduction', {
             schemaVersion: 1,
             stateVersion: result.stateVersion,
             status: 'awaiting_human_confirmation',
@@ -241,7 +289,7 @@ export function createWebMcpTools(
             visibleConfirmation: true,
           });
         } catch (error) {
-          return failure(store, error, activity, token);
+          return failure('prepare_introduction', store, error, activity, token);
         }
       },
     },

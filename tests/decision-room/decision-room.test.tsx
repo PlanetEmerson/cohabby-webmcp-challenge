@@ -30,13 +30,13 @@ afterEach(() => {
 });
 
 describe('Living Decision Room human experience', () => {
-  it('registers one strict-mode-safe five-tool generation and cleans it up on unmount', async () => {
+  it('registers one strict-mode-safe six-tool generation and cleans it up on unmount', async () => {
     const context = new BrowserModelContext();
     Object.defineProperty(document, 'modelContext', { configurable: true, value: context });
     const view = render(<StrictMode><DecisionRoom sourceRevision="test123" /></StrictMode>);
 
     expect(await screen.findByText('Site tools ready')).toBeInTheDocument();
-    expect(context.active.size).toBe(5);
+    expect(context.active.size).toBe(6);
     view.unmount();
     expect(context.active.size).toBe(0);
   });

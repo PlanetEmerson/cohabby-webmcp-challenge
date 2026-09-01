@@ -25,7 +25,7 @@ describe('WebMCP input contracts', () => {
     }
   });
 
-  it('accepts the exact bounded inputs for all five public tools', () => {
+  it('accepts the exact bounded inputs for all six public tools', () => {
     expect(parseToolInput('get_living_context', {})).toEqual({});
     expect(parseToolInput('find_compatible_rooms', {
       limit: 6,
@@ -33,19 +33,22 @@ describe('WebMCP input contracts', () => {
     })).toEqual({ limit: 6, order: 'lowest_price' });
     expect(parseToolInput('compare_shortlist', {
       roomRefs: ['room_nyc_cedar', 'room_nyc_hudson'],
-      dimensions: ['budget', 'house_rules'],
+      dimensions: ['synergy_read', 'budget', 'house_rules'],
     })).toEqual({
       roomRefs: ['room_nyc_cedar', 'room_nyc_hudson'],
-      dimensions: ['budget', 'house_rules'],
+      dimensions: ['synergy_read', 'budget', 'house_rules'],
     });
+    expect(parseToolInput('explain_synergy_match', {
+      roomRef: 'room_nyc_cedar',
+    })).toEqual({ roomRef: 'room_nyc_cedar' });
     expect(parseToolInput('prepare_introduction', {
       roomRef: 'room_nyc_cedar',
       tone: 'warm',
-      highlightCodes: ['budget_fit', 'pet_fit'],
+      highlightCodes: ['budget_fit', 'daily_rhythm_fit'],
     })).toEqual({
       roomRef: 'room_nyc_cedar',
       tone: 'warm',
-      highlightCodes: ['budget_fit', 'pet_fit'],
+      highlightCodes: ['budget_fit', 'daily_rhythm_fit'],
     });
   });
 
@@ -87,6 +90,9 @@ describe('WebMCP input contracts', () => {
     ['find_compatible_rooms', { order: 'nearest' }],
     ['compare_shortlist', { roomRefs: ['room_nyc_cedar', 'room_nyc_cedar'] }],
     ['compare_shortlist', { roomRefs: ['listing_123', 'room_nyc_cedar'] }],
+    ['explain_synergy_match', {}],
+    ['explain_synergy_match', { roomRef: 'person_demo_maya' }],
+    ['explain_synergy_match', { roomRef: 'room_nyc_cedar', includeFormula: true }],
     ['prepare_introduction', { roomRef: 'room_nyc_cedar', tone: 'salesy' }],
     ['get_living_context', { includeHidden: true }],
   ] as const)('rejects an out-of-contract %s payload', (name, input) => {

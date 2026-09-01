@@ -13,7 +13,7 @@ const sampleBrief = {
   pets: 'cat',
   smoking: 'no_smoking',
   quietTime: 'early_evenings',
-};
+} as const;
 
 async function executeAfterRendering(
   store: ReturnType<typeof createDecisionRoomStore>,
@@ -109,7 +109,7 @@ describe('Living Decision Room WebMCP tools', () => {
   });
 
 
-  it('exposes the five exact tools through the real state machine and visible render boundary', async () => {
+  it('exposes the six exact tools through the real state machine and visible render boundary', async () => {
     const store = createDecisionRoomStore();
     const tools = createWebMcpTools(store);
     const byName = new Map(tools.map((tool) => [tool.name, tool]));
@@ -118,6 +118,7 @@ describe('Living Decision Room WebMCP tools', () => {
       'get_living_context',
       'stage_living_brief',
       'find_compatible_rooms',
+      'explain_synergy_match',
       'compare_shortlist',
       'prepare_introduction',
     ]);
@@ -132,6 +133,8 @@ describe('Living Decision Room WebMCP tools', () => {
       status: 'ready',
       phase: 'READY',
       visibleRoomRefs: [],
+      visibleProfileSignals: ['early_mornings', 'tidy_shared_spaces', 'quiet_weekends', 'cat_household'],
+      synergyExplanationStatus: 'none',
       shortlistCount: 0,
       introductionStatus: 'none',
     });
@@ -167,19 +170,48 @@ describe('Living Decision Room WebMCP tools', () => {
       phase: 'RESULTS_READY',
       resultGeneration: 1,
       visibleRoomRefs: ['room_nyc_cedar', 'room_nyc_hudson', 'room_nyc_linden'],
+      rooms: [
+        expect.objectContaining({
+          roomRef: 'room_nyc_cedar',
+          housemate: expect.objectContaining({ displayName: 'Maya' }),
+          synergy: expect.objectContaining({ source: 'synthetic_fixture', score: 92 }),
+        }),
+        expect.any(Object),
+        expect.any(Object),
+      ],
+    });
+
+    const explained = await executeAfterRendering(store, byName.get('explain_synergy_match')!, {
+      roomRef: 'room_nyc_cedar',
+    });
+    expect(explained).toEqual({
+      schemaVersion: 1,
+      stateVersion: 5,
+      status: 'synergy_explanation_ready',
+      phase: 'SYNERGY_EXPLAINED',
+      roomRef: 'room_nyc_cedar',
+      personRef: 'person_demo_maya',
+      displayName: 'Maya',
+      scoreSource: 'synthetic_fixture',
+      score: 92,
+      evidencePercent: 88,
+      readLabel: 'strong_read',
+      reasonCodes: ['daily_rhythm_fit', 'shared_space_fit', 'household_boundaries_fit'],
+      reasonLabels: ['Both prefer quiet mornings', 'Both value tidy shared spaces', 'Clear household boundaries align'],
+      visibleExplanation: true,
     });
 
     const compared = await executeAfterRendering(store, byName.get('compare_shortlist')!, {
       roomRefs: ['room_nyc_cedar', 'room_nyc_hudson'],
-      dimensions: ['budget', 'home_rhythm'],
+      dimensions: ['synergy_read', 'budget', 'home_rhythm'],
     });
     expect(compared).toEqual({
       schemaVersion: 1,
-      stateVersion: 5,
+      stateVersion: 6,
       status: 'comparison_ready',
       phase: 'COMPARISON_READY',
       roomRefs: ['room_nyc_cedar', 'room_nyc_hudson'],
-      dimensions: ['budget', 'home_rhythm'],
+      dimensions: ['synergy_read', 'budget', 'home_rhythm'],
     });
 
     const prepared = await executeAfterRendering(store, byName.get('prepare_introduction')!, {
@@ -189,7 +221,7 @@ describe('Living Decision Room WebMCP tools', () => {
     });
     expect(prepared).toEqual({
       schemaVersion: 1,
-      stateVersion: 6,
+      stateVersion: 7,
       status: 'awaiting_human_confirmation',
       phase: 'INTRODUCTION_STAGED',
       draftRef: 'introduction_01_01',
@@ -201,5 +233,25 @@ describe('Living Decision Room WebMCP tools', () => {
 
     expect(byName.has('apply_living_brief')).toBe(false);
     expect(byName.has('confirm_introduction')).toBe(false);
+  });
+
+  it('does not commit a pre-canceled Synergy explanation', async () => {
+    const store = createDecisionRoomStore();
+    const byName = new Map(createWebMcpTools(store).map((tool) => [tool.name, tool]));
+    const staged = store.stageLivingBrief(sampleBrief);
+    store.applyBriefByHuman(staged.proposalRef);
+    await store.findCompatibleRooms({ limit: 6, order: 'best_fit' }, new AbortController().signal);
+    const canceled = new AbortController();
+    canceled.abort();
+
+    await expect(byName.get('explain_synergy_match')!.execute(
+      { roomRef: 'room_nyc_cedar' },
+      { signal: canceled.signal },
+    )).resolves.toMatchObject({
+      stateVersion: 4,
+      status: 'error',
+      error: { code: 'canceled' },
+    });
+    expect(store.getState()).toMatchObject({ phase: 'RESULTS_READY', stateVersion: 4, synergyExplanation: null });
   });
 });

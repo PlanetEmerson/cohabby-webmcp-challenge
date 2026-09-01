@@ -5,6 +5,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import standaloneCode from 'ajv/dist/standalone/index.js';
 
 import { toolInputSchemas } from '../lib/webmcp/tool-schemas';
+import { toolOutputSchemas } from '../lib/webmcp/tool-output-schemas';
 
 const ajv = new Ajv2020({
   allErrors: true,
@@ -16,13 +17,23 @@ const ajv = new Ajv2020({
 for (const [name, schema] of Object.entries(toolInputSchemas)) {
   ajv.addSchema(schema, name);
 }
+for (const [name, schema] of Object.entries(toolOutputSchemas)) {
+  ajv.addSchema(schema, `output_${name}`);
+}
 
 const code = standaloneCode(ajv, {
   validateGetLivingContext: 'get_living_context',
   validateStageLivingBrief: 'stage_living_brief',
   validateFindCompatibleRooms: 'find_compatible_rooms',
+  validateExplainSynergyMatch: 'explain_synergy_match',
   validateCompareShortlist: 'compare_shortlist',
   validatePrepareIntroduction: 'prepare_introduction',
+  validateOutputGetLivingContext: 'output_get_living_context',
+  validateOutputStageLivingBrief: 'output_stage_living_brief',
+  validateOutputFindCompatibleRooms: 'output_find_compatible_rooms',
+  validateOutputExplainSynergyMatch: 'output_explain_synergy_match',
+  validateOutputCompareShortlist: 'output_compare_shortlist',
+  validateOutputPrepareIntroduction: 'output_prepare_introduction',
 });
 const browserCompatibleCode = code.replace(
   'const func1 = require("ajv/dist/runtime/ucs2length").default;',

@@ -66,6 +66,7 @@ const stageProgress = {
   ready: 0.08,
   brief: 0.28,
   rooms: 0.52,
+  synergy: 0.64,
   comparison: 0.75,
   introduction: 0.92,
   confirmed: 1,

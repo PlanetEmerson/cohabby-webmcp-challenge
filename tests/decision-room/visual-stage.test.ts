@@ -9,6 +9,7 @@ describe('Living Matchboard visual stage', () => {
     ['BRIEF_STAGED', 'brief'],
     ['BRIEF_APPLIED_BY_HUMAN', 'brief'],
     ['RESULTS_READY', 'rooms'],
+    ['SYNERGY_EXPLAINED', 'synergy'],
     ['COMPARISON_READY', 'comparison'],
     ['INTRODUCTION_STAGED', 'introduction'],
     ['INTRODUCTION_CONFIRMED_BY_HUMAN', 'confirmed'],

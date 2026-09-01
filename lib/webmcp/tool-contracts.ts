@@ -1,6 +1,7 @@
 import {
   validateCompareShortlist,
   validateFindCompatibleRooms,
+  validateExplainSynergyMatch,
   validateGetLivingContext,
   validatePrepareIntroduction,
   validateStageLivingBrief,
@@ -34,6 +35,7 @@ const validators: Record<ToolName, StandaloneValidator> = {
   get_living_context: validateGetLivingContext,
   stage_living_brief: validateStageLivingBrief,
   find_compatible_rooms: validateFindCompatibleRooms,
+  explain_synergy_match: validateExplainSynergyMatch,
   compare_shortlist: validateCompareShortlist,
   prepare_introduction: validatePrepareIntroduction,
 };

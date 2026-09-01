@@ -13,8 +13,11 @@ export function buildIntroductionDraft(input: Readonly<{
 }>): string {
   const labels = input.highlightCodes
     .map((code) => {
-      const index = input.room.reasonCodes.indexOf(code);
-      return index >= 0 ? input.room.reasonLabels[index] : null;
+      const practicalIndex = input.room.reasonCodes.indexOf(code);
+      if (practicalIndex >= 0) return input.room.reasonLabels[practicalIndex] ?? null;
+      const synergyCodes: ReadonlyArray<SafeReasonCode> = input.room.synergy.reasonCodes;
+      const synergyIndex = synergyCodes.indexOf(code);
+      return synergyIndex >= 0 ? input.room.synergy.reasonLabels[synergyIndex] ?? null : null;
     })
     .filter((label): label is string => Boolean(label));
   const reasons = labels.length > 0
@@ -22,10 +25,10 @@ export function buildIntroductionDraft(input: Readonly<{
     : 'The practical details look like a good fit for my current search.';
 
   if (input.tone === 'direct') {
-    return `Hi, I'm interested in ${input.room.headline}. ${reasons} Could we talk through availability and the shared-home rules?`;
+    return `Hi ${input.room.housemate.displayName}, I'm interested in ${input.room.headline}. ${reasons} Could we talk through availability and how the home works day to day?`;
   }
   if (input.tone === 'casual') {
-    return `Hi! ${input.room.headline} caught my eye. ${reasons} I'd be happy to chat about the room and how the home works day to day.`;
+    return `Hi ${input.room.housemate.displayName}! ${input.room.headline} caught my eye. ${reasons} I'd be happy to chat about the room and how the home works day to day.`;
   }
-  return `Hi! I'm interested in ${input.room.headline}. ${reasons} I'd love to learn more about the room and see whether it could be a good practical fit.`;
+  return `Hi ${input.room.housemate.displayName}! I'm interested in ${input.room.headline}. ${reasons} I'd love to learn more about you and how the home works day to day.`;
 }
