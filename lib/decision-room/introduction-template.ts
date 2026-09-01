@@ -21,14 +21,14 @@ export function buildIntroductionDraft(input: Readonly<{
     })
     .filter((label): label is string => Boolean(label));
   const reasons = labels.length > 0
-    ? `The details that stand out are ${labels.join(', ').toLowerCase()}.`
+    ? `A few things line up: ${labels.join(', ').toLowerCase()}.`
     : 'The practical details look like a good fit for my current search.';
 
   if (input.tone === 'direct') {
-    return `Hi ${input.room.housemate.displayName}, it looks like our roommate routines may line up. ${reasons} I'm also considering ${input.room.headline}. Could we compare how we each use shared space and talk through availability?`;
+    return `Hi ${input.room.housemate.displayName}, it looks like our home habits may fit. ${reasons} Are you open to a quick chat about shared-space habits and the home?`;
   }
   if (input.tone === 'casual') {
-    return `Hi ${input.room.housemate.displayName}! It looks like our roommate routines may line up. ${reasons} I'd be happy to compare how we each use shared space and talk about ${input.room.headline}.`;
+    return `Hey ${input.room.housemate.displayName}! It looks like our home habits may fit. ${reasons} Want to compare roommate routines and talk about the home?`;
   }
-  return `Hi ${input.room.housemate.displayName}! It looks like our roommate routines may line up. ${reasons} I'd like to compare how we each use shared space and learn how the home works day to day.`;
+  return `Hi ${input.room.housemate.displayName}! It looks like our home habits may fit. ${reasons} I'd like to compare how we each use shared space and see whether the home could work for both of us.`;
 }

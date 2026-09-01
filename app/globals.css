@@ -25,6 +25,21 @@
   }
 }
 
+@layer components {
+  .stage-copy-halo {
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.98),
+      0 0 14px rgb(255 255 255 / 0.92),
+      0 4px 18px rgb(73 47 34 / 0.16);
+  }
+
+  .stage-copy-soft {
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.96),
+      0 0 10px rgb(255 255 255 / 0.82);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

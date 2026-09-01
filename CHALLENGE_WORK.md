@@ -25,7 +25,8 @@ The following work was built for the challenge:
 - Twenty-four original generated images with stripped metadata and committed provenance.
 - Human-only living-plan approval, introduction editing, confirmation, and reset.
 - The centered six-step WebMCP ribbon and one-stage people-first interface.
-- The Synthetic Synergy Lens, person-first comparison, practical tone choice, roommate note, and non-romantic completion state.
+- The production-inspired Synthetic Synergy Lens, person-first comparison, practical tone choice, roommate hello, and non-romantic completion state.
+- The V4 copy and presentation pass: clearer people-first language, larger roommate portraits, a legible SVG score gauge, stronger data hierarchy, brighter actions, and stage text that stays clear over the living field.
 - Responsive, reduced-motion, save-data, WebGL fallback, unsupported-browser, and keyboard paths.
 - Public tests, security headers, setup instructions, asset prompts, demo script, Devpost draft, and evidence map.
 
@@ -42,7 +43,7 @@ The fixed tool names preserve compatibility with the earlier challenge build. No
 
 ## Synthetic Synergy boundary
 
-The V3 scores and evidence values are hand-authored fixture data. They do not run, copy, approximate, or reveal CoHabby’s private production model. The demo uses the score only after hard practical housing boundaries.
+The scores and evidence values are hand-authored fixture data. They do not run, copy, approximate, or reveal CoHabby’s private production model. The demo uses the score only after hard practical housing boundaries.
 
 Portrait appearance is decorative. It never enters filtering, ordering, a tool input, or a tool output.
 
@@ -50,4 +51,4 @@ Portrait appearance is decorative. It never enters filtering, ordering, a tool i
 
 This challenge build includes no production search, real members, real listings, authentication, payments, invitations, messaging, voice, external MCP, model API, Firebase, Algolia, Stripe, RevenueCat, Cloud Run, or AI-platform submission.
 
-The live footer and immutable V3 tag bind the final judged deployment to this public source after the clean-clone release gate.
+The live footer and immutable V4 tag bind the final judged deployment to this public source after the clean-clone release gate. The earlier V3 tag stays unchanged.

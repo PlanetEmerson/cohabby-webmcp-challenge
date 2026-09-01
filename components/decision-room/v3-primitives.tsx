@@ -8,8 +8,10 @@ import {
   CigaretteOff,
   House,
   MapPin,
+  Sprout,
 } from 'lucide-react';
 import { m } from 'motion/react';
+import { useId } from 'react';
 
 import type { SafeSynergyRead } from '@/lib/decision-room/types';
 import type { StageLivingBriefInput } from '@/lib/webmcp/tool-contracts';
@@ -126,35 +128,61 @@ export function SynergyLens({
   synergy: Pick<SafeSynergyRead, 'score' | 'evidencePercent' | 'readLabel'>;
   size?: 'sm' | 'md' | 'lg';
 }) {
-  const dimensions = size === 'sm' ? 'h-16 w-16' : size === 'lg' ? 'h-36 w-36' : 'h-24 w-24';
-  const scoreSize = size === 'sm' ? 'text-xl' : size === 'lg' ? 'text-5xl' : 'text-3xl';
+  const gradientId = `synergy-${useId().replace(/:/g, '')}`;
+  const dimensions = size === 'sm' ? 'h-24 w-24' : size === 'lg' ? 'h-40 w-40' : 'h-28 w-28';
+  const scoreSize = size === 'sm' ? 'text-2xl' : size === 'lg' ? 'text-5xl' : 'text-3xl';
+  const labelSize = size === 'sm' ? 'text-[8px]' : size === 'lg' ? 'text-[10px]' : 'text-[8px]';
+  const radius = 44;
+  const circumference = 2 * Math.PI * radius;
+  const scoreOffset = circumference * (1 - synergy.score / 100);
+  const evidenceDots = 30;
+  const filledDots = Math.round((synergy.evidencePercent / 100) * evidenceDots);
   return (
     <div
       role="img"
       aria-label={`Synthetic Synergy Score ${synergy.score} out of 100, ${displayLabel(synergy.readLabel)}, ${synergy.evidencePercent} percent demo evidence`}
-      className={cn('relative grid shrink-0 place-items-center rounded-full bg-white shadow-sm', dimensions)}
+      data-synergy-size={size}
+      className={cn('relative grid shrink-0 place-items-center rounded-full bg-white shadow-[0_8px_24px_rgba(79,54,42,0.12)]', dimensions)}
     >
-      <span
-        className="absolute inset-0 rounded-full"
-        style={{
-          background: `conic-gradient(#C2401F 0 ${Math.min(synergy.score, 48)}%, #00756B ${Math.min(synergy.score, 48)}% ${synergy.score}%, #EADCD2 ${synergy.score}% 100%)`,
-          WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 7px))',
-          mask: 'radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 7px))',
-        }}
-        aria-hidden="true"
-      />
-      <span
-        className="absolute -inset-1 rounded-full opacity-50"
-        style={{
-          background: `repeating-conic-gradient(#00756B 0 1.2deg, transparent 1.2deg 8deg)`,
-          WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px))',
-          mask: 'radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px))',
-        }}
-        aria-hidden="true"
-      />
-      <span className="relative flex flex-col items-center">
+      <svg viewBox="0 0 120 120" className="absolute inset-0 h-full w-full" aria-hidden="true">
+        <defs>
+          <linearGradient id={gradientId} x1="16" y1="20" x2="104" y2="100" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#F26B5B" />
+            <stop offset="0.48" stopColor="#F4C95D" />
+            <stop offset="1" stopColor="#008F83" />
+          </linearGradient>
+        </defs>
+        {Array.from({ length: evidenceDots }, (_, index) => {
+          const angle = (index / evidenceDots) * Math.PI * 2 - Math.PI / 2;
+          return (
+            <circle
+              key={index}
+              cx={60 + Math.cos(angle) * 54}
+              cy={60 + Math.sin(angle) * 54}
+              r={index < filledDots ? 1.35 : 1}
+              fill={index < filledDots ? '#008F83' : '#E7D9CF'}
+              opacity={index < filledDots ? 0.82 : 0.55}
+            />
+          );
+        })}
+        <circle cx="60" cy="60" r={radius} fill="none" stroke="#F0E4DB" strokeWidth="8" />
+        <circle
+          cx="60"
+          cy="60"
+          r={radius}
+          fill="none"
+          stroke={`url(#${gradientId})`}
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={scoreOffset}
+          transform="rotate(-90 60 60)"
+        />
+      </svg>
+      <span className="relative flex flex-col items-center justify-center leading-none">
+        <Sprout className={cn('mb-0.5 text-info-dark', size === 'sm' ? 'h-2.5 w-2.5' : size === 'lg' ? 'h-5 w-5' : 'h-3.5 w-3.5')} aria-hidden="true" />
         <span className={cn('font-display font-bold leading-none tabular-nums text-text-primary', scoreSize)}>{synergy.score}</span>
-        <span className="mt-1 font-display text-[9px] font-bold uppercase tracking-[0.14em] text-info-dark">Synergy</span>
+        <span data-synergy-label className={cn('mt-1 font-display font-bold uppercase leading-none tracking-[0.12em] text-info-dark', labelSize)}>Synergy</span>
       </span>
     </div>
   );

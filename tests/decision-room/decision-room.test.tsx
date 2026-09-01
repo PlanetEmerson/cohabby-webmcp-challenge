@@ -45,30 +45,34 @@ describe('Living Decision Room human experience', () => {
     const user = userEvent.setup();
     render(<DecisionRoom sourceRevision="test123" />);
 
-    expect(screen.getByRole('heading', { name: 'Meet someone you could actually live well with.' })).toBeInTheDocument();
+    expect(screen.getByText('Compatibility-first roommate finder')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Live with someone who gets you.' })).toBeInTheDocument();
+    expect(screen.getByText('CoHabby finds roommates whose habits fit yours. Your browser agent does the sorting. You choose who to meet.')).toBeInTheDocument();
     const stage = screen.getByRole('region', { name: 'People-first decision stage' });
     expect(stage).toHaveAttribute('data-visual-stage', 'ready');
     expect(screen.getByRole('list', { name: 'CoHabby and browser agent steps' }).children).toHaveLength(6);
-    expect(screen.getByRole('button', { name: 'Start with this demo plan' })).toBeInTheDocument();
-    expect(await screen.findByText('Site tools are not available here. You can still use the full demo on this page.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Try the roommate demo' })).toBeInTheDocument();
+    expect(await screen.findByText("Site tools aren't available in this browser. You can still try the full demo yourself.")).toBeInTheDocument();
     expect(screen.getByRole('status', { name: 'Site tools status' })).toHaveTextContent('Site tools unavailable');
     const visibleCopy = document.body.cloneNode(true) as HTMLElement;
     visibleCopy.querySelector('[data-exact-tool-disclosure]')?.remove();
     expect(visibleCopy.textContent).not.toMatch(/\bbrief\b/i);
     expect(visibleCopy.textContent).not.toMatch(/dating|romance|chemistry|relationship/i);
 
-    await user.click(screen.getByRole('button', { name: 'Start with this demo plan' }));
+    await user.click(screen.getByRole('button', { name: 'Try the roommate demo' }));
     expect(screen.getByRole('region', { name: 'Check your living plan' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Does this feel like you?' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'People-first decision stage' })).toHaveAttribute('data-visual-stage', 'brief');
     expect(document.querySelectorAll('[data-human-action]')).toHaveLength(1);
     expect(screen.getByRole('textbox', { name: 'Market' })).toHaveValue('New York');
     expect(screen.queryByText('Quiet room with sunny shared space')).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Use these choices' }));
+    await user.click(screen.getByRole('button', { name: 'Yes, use these choices' }));
     expect(screen.getByRole('region', { name: 'Ready to find people and homes' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Your living plan is ready.' })).toBeInTheDocument();
     expect(document.querySelectorAll('[data-human-action]')).toHaveLength(0);
 
-    await user.click(screen.getByRole('button', { name: 'Show people and homes' }));
+    await user.click(screen.getByRole('button', { name: 'Show my matches' }));
     expect(await screen.findByText('Quiet room with sunny shared space')).toBeInTheDocument();
     expect(screen.getByText('Maya')).toBeInTheDocument();
     expect(screen.getByText('92')).toBeInTheDocument();
@@ -81,7 +85,7 @@ describe('Living Decision Room human experience', () => {
     expect(screen.getByRole('region', { name: 'Synthetic Synergy explanation for Maya' })).toBeInTheDocument();
     expect(screen.getByText('Both prefer quiet mornings')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Compare 2 matches' }));
+    await user.click(screen.getByRole('button', { name: 'Compare 2 roommates' }));
     const comparison = screen.getByRole('region', { name: 'People and home comparison' });
     expect(within(comparison).getByRole('table', { name: 'People and home comparison details' })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: 'Say hello to Maya' })).toBeChecked();
@@ -101,7 +105,7 @@ describe('Living Decision Room human experience', () => {
 
     await user.click(screen.getByRole('button', { name: 'Reset demo' }));
     await waitFor(() => expect(screen.getByRole('region', { name: 'People-first decision stage' })).toHaveAttribute('data-visual-stage', 'ready'));
-    expect(screen.getByRole('button', { name: 'Start with this demo plan' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Try the roommate demo' })).toBeInTheDocument();
     expect(screen.queryByText('Quiet room with sunny shared space')).not.toBeInTheDocument();
   });
 
@@ -116,7 +120,7 @@ describe('Living Decision Room human experience', () => {
         signal: new AbortController().signal,
       });
     });
-    expect(screen.getByText('Your living style is visible to the agent.')).toBeInTheDocument();
+    expect(screen.getByText('Your agent read your living habits.')).toBeInTheDocument();
 
     await act(async () => {
       await context.tools.get('stage_living_brief')!.execute({
@@ -130,7 +134,7 @@ describe('Living Decision Room human experience', () => {
         quietTime: 'early_evenings',
       }, { signal: new AbortController().signal });
     });
-    expect(screen.getByText('Your living plan is ready to check.')).toBeInTheDocument();
+    expect(screen.getByText('Your choices are ready to review.')).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'People-first decision stage' })).toHaveAttribute('data-visual-stage', 'brief');
   });
 });

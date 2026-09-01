@@ -17,12 +17,12 @@ import { cn } from '@/lib/utils/cn';
 export type SiteToolsStatus = 'checking' | 'ready' | 'unsupported' | 'error';
 
 const steps = [
-  { action: 'get_living_context', label: 'Read your style', tool: 'get_living_context', icon: ScanSearch, rank: 0 },
+  { action: 'get_living_context', label: 'Read your habits', tool: 'get_living_context', icon: ScanSearch, rank: 0 },
   { action: 'stage_living_brief', label: 'Set must-haves', tool: 'stage_living_brief', icon: FilePenLine, rank: 1 },
-  { action: 'find_compatible_rooms', label: 'Find people + homes', tool: 'find_compatible_rooms', icon: Search, rank: 2 },
+  { action: 'find_compatible_rooms', label: 'Find roommate matches', tool: 'find_compatible_rooms', icon: Search, rank: 2 },
   { action: 'explain_synergy_match', label: 'Explain Synergy', tool: 'explain_synergy_match', icon: Sparkles, rank: 3 },
-  { action: 'compare_shortlist', label: 'Compare life together', tool: 'compare_shortlist', icon: GitCompareArrows, rank: 4 },
-  { action: 'prepare_introduction', label: 'Write first hello', tool: 'prepare_introduction', icon: MessageSquareText, rank: 5 },
+  { action: 'compare_shortlist', label: 'Compare daily life', tool: 'compare_shortlist', icon: GitCompareArrows, rank: 4 },
+  { action: 'prepare_introduction', label: 'Write a first hello', tool: 'prepare_introduction', icon: MessageSquareText, rank: 5 },
 ] as const;
 
 const phaseRank: Record<DecisionRoomPhase, number> = {
@@ -37,25 +37,25 @@ const phaseRank: Record<DecisionRoomPhase, number> = {
 };
 
 function activityMessage(activity: DecisionRoomActivitySnapshot): string {
-  if (!activity.action || activity.status === 'idle') return 'Your browser agent works on this same page.';
+  if (!activity.action || activity.status === 'idle') return 'Your browser agent is ready on this page.';
   const owner = activity.actor === 'agent' ? 'Your browser agent' : 'You';
-  if (activity.status === 'running') return `${owner} is updating the shared stage.`;
-  if (activity.status === 'canceled') return 'Canceled. Your current choices stayed in place.';
-  if (activity.status === 'error') return 'That action could not change the shared stage.';
+  if (activity.status === 'running') return `${owner} ${activity.actor === 'agent' ? 'is updating the page.' : 'are updating your choices.'}`;
+  if (activity.status === 'canceled') return 'Canceled. Your choices stayed the same.';
+  if (activity.status === 'error') return 'That step did not finish. Your choices stayed the same.';
   switch (activity.action) {
-    case 'get_living_context': return 'Your living style is visible to the agent.';
-    case 'stage_living_brief': return 'Your living plan is ready to check.';
-    case 'find_compatible_rooms': return `${activity.targetRefs.length} people + homes added to your page.`;
+    case 'get_living_context': return 'Your agent read your living habits.';
+    case 'stage_living_brief': return 'Your choices are ready to review.';
+    case 'find_compatible_rooms': return `${activity.targetRefs.length} roommate matches added to the page.`;
     case 'explain_synergy_match': return 'The synthetic Synergy read is open.';
-    case 'return_to_results': return 'The current people and homes are back on stage.';
-    case 'compare_shortlist': return `${activity.targetRefs.length} possible roommate connections are side by side.`;
-    case 'prepare_introduction': return 'Your first hello is ready to check.';
-    case 'apply_brief': return 'You approved your living plan.';
-    case 'discard_brief': return 'You cleared the staged choices.';
-    case 'edit_brief': return 'You changed your living plan.';
-    case 'edit_introduction': return 'You changed the first hello.';
-    case 'confirm_introduction': return 'You confirmed the demo introduction.';
-    case 'reset': return 'You reset the demo.';
+    case 'return_to_results': return 'Your roommate matches are back.';
+    case 'compare_shortlist': return `${activity.targetRefs.length} roommates are side by side.`;
+    case 'prepare_introduction': return 'Your first hello is ready to review.';
+    case 'apply_brief': return 'You approved your living choices.';
+    case 'discard_brief': return 'You cleared the draft choices.';
+    case 'edit_brief': return 'You updated your living choices.';
+    case 'edit_introduction': return 'You changed the hello.';
+    case 'confirm_introduction': return 'Demo confirmed. No real message was sent.';
+    case 'reset': return 'The demo is ready to start again.';
   }
 }
 
@@ -93,7 +93,7 @@ export function WebMcpRibbon({
                 )}>
                   {completed ? <Check className="h-4 w-4" aria-hidden="true" /> : <Icon className="h-4 w-4" aria-hidden="true" />}
                 </span>
-                <span className={cn('mt-1.5 hidden truncate font-display text-[11px] font-semibold leading-tight sm:block', current ? 'text-text-primary' : completed ? 'text-info-dark' : 'text-text-tertiary')}>
+                <span className={cn('mt-1.5 hidden min-h-[2.1rem] px-0.5 font-display text-[11px] font-semibold leading-[1.05] sm:block', current ? 'text-text-primary' : completed ? 'text-info-dark' : 'text-text-tertiary')}>
                   {step.label}
                 </span>
                 <span className="sr-only">Step {index + 1}: {step.label}</span>
@@ -103,7 +103,7 @@ export function WebMcpRibbon({
         </ol>
         <div className="min-h-10 rounded-xl bg-neutral-50 px-3 py-2 text-[11px] leading-relaxed text-text-secondary sm:text-body-sm" aria-live="polite">
           {siteToolsStatus === 'unsupported' || siteToolsStatus === 'error'
-            ? 'Site tools are not available here. You can still use the full demo on this page.'
+            ? 'Site tools aren\'t available in this browser. You can still try the full demo yourself.'
             : activityMessage(activity)}
         </div>
       </div>

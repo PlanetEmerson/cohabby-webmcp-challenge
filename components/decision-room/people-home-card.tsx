@@ -60,12 +60,12 @@ export function PeopleHomeCard({
             className="object-cover transition duration-500 group-hover:scale-[1.025]"
           />
           <span className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-neutral-950/55 to-transparent" aria-hidden="true" />
-          <span className="absolute left-4 top-4 h-16 w-16 overflow-hidden rounded-2xl border-[3px] border-white bg-neutral-100 shadow-lg">
+          <span data-person-portrait="card" className="absolute left-4 top-4 h-28 w-28 overflow-hidden rounded-[1.4rem] border-[4px] border-white bg-neutral-100 shadow-lg">
             <Image
               src={personVisualFor(room.housemate.personRef)}
               alt={`Synthetic demo portrait of ${name}`}
               fill
-              sizes="64px"
+              sizes="112px"
               className="object-cover"
             />
           </span>

@@ -218,7 +218,7 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
                     <ChevronDown className="h-4 w-4 transition group-open:rotate-180" aria-hidden="true" />
                   </summary>
                   <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-neutral-200 bg-white p-3 shadow-elevated" data-exact-tool-disclosure>
-                    <p className="px-2 pb-2 text-body-sm text-text-secondary">Six bounded tools work on this visible page.</p>
+                    <p className="px-2 pb-2 text-body-sm text-text-secondary">Six small tools let your browser agent work on this page with you.</p>
                     <ul className="space-y-1">
                       {exactToolNames.map((name) => <li key={name} className="rounded-lg bg-neutral-50 px-2 py-1.5 font-mono text-[11px] text-text-secondary">{name}</li>)}
                     </ul>
@@ -229,9 +229,9 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
             </header>
 
             <section className={cn('text-center transition-[padding] duration-causal', isOpeningStage ? 'pb-5 pt-8 sm:pt-10' : 'pb-4 pt-5 max-sm:py-3')}>
-              <p className={cn('font-display font-bold uppercase tracking-[0.17em] text-primary-ink transition-all duration-causal', isOpeningStage ? 'text-sm' : 'text-xs max-sm:hidden')}>Better roommates begin with how people live</p>
-              <h1 className={cn('mx-auto max-w-5xl font-display font-bold leading-[0.98] tracking-[-0.045em] text-text-primary transition-[font-size] duration-causal', isOpeningStage ? 'mt-2 text-4xl sm:text-5xl lg:text-6xl' : 'mt-1.5 text-3xl sm:text-4xl lg:text-5xl max-sm:mt-0 max-sm:text-2xl max-sm:leading-tight')}>Meet someone you could actually live well with.</h1>
-              <p className={cn('mx-auto max-w-3xl text-text-secondary transition-all duration-causal', isOpeningStage ? 'mt-3 text-body-lg sm:text-lg' : 'mt-2 text-body-md max-sm:hidden')}>Your browser agent brings people and homes together. You make the introduction.</p>
+              <p className={cn('font-display font-bold uppercase tracking-[0.17em] text-primary-ink transition-all duration-causal', isOpeningStage ? 'text-sm' : 'text-xs max-sm:hidden')}>Compatibility-first roommate finder</p>
+              <h1 className={cn('mx-auto max-w-5xl font-display font-bold leading-[0.98] tracking-[-0.045em] text-text-primary transition-[font-size] duration-causal', isOpeningStage ? 'mt-2 text-4xl sm:text-5xl lg:text-6xl' : 'mt-1.5 text-3xl sm:text-4xl lg:text-5xl max-sm:mt-0 max-sm:text-2xl max-sm:leading-tight')}>Live with someone who gets you.</h1>
+              <p className={cn('mx-auto max-w-3xl text-text-secondary transition-all duration-causal', isOpeningStage ? 'mt-3 text-body-lg sm:text-lg' : 'mt-2 text-body-md max-sm:hidden')}>CoHabby finds roommates whose habits fit yours. Your browser agent does the sorting. You choose who to meet.</p>
             </section>
 
             <WebMcpRibbon phase={state.phase} activity={activitySnapshot} siteToolsStatus={siteToolsStatus} />
@@ -331,7 +331,7 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
 
             <aside className="mt-4 flex flex-col gap-2 rounded-2xl border border-warning/25 bg-warning-surface px-4 py-3 text-body-sm text-warning-dark sm:flex-row sm:items-center" aria-label="Synthetic Synergy disclosure">
               <ShieldCheck className="h-5 w-5 shrink-0" aria-hidden="true" />
-              <p><strong>People-first and practical.</strong> Synergy Scores in this demo are fixed synthetic reads and do not use CoHabby&apos;s production scoring model. Protected traits never enter the roommate search.</p>
+              <p><strong>A safe, fictional demo.</strong> Every person, home, and Synergy Score here is fictional. No production scoring runs, protected traits never enter the search, and no message leaves this page.</p>
             </aside>
 
             <footer className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-neutral-200 py-4 text-body-sm text-text-tertiary">

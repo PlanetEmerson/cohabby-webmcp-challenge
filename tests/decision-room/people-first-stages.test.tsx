@@ -1,10 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { ComparisonStage } from '@/components/decision-room/match-stages';
+import { ActionDock } from '@/components/decision-room/action-dock';
+import { IntroductionStage } from '@/components/decision-room/connection-stages';
+import { ComparisonStage, MatchesStage } from '@/components/decision-room/match-stages';
 import { LivingField } from '@/components/decision-room/living-field';
 import { PeopleHomeCard } from '@/components/decision-room/people-home-card';
+import { SynergyLens } from '@/components/decision-room/v3-primitives';
 import type { SafeRoomSummary } from '@/lib/decision-room/types';
 
 const rooms: SafeRoomSummary[] = [
@@ -64,6 +67,22 @@ describe('people-first visual stages', () => {
     checkbox.focus();
     await user.keyboard('[Space]');
     expect(onToggle).toHaveBeenCalledTimes(2);
+
+    expect(document.querySelector('[data-person-portrait="card"]')).toHaveClass('h-28', 'w-28');
+  });
+
+  it('keeps every Synergy score and label legible in a production-style evidence ring', () => {
+    const view = render(<><SynergyLens synergy={rooms[0]!.synergy} size="sm" /><SynergyLens synergy={rooms[1]!.synergy} size="sm" /></>);
+    const lenses = screen.getAllByRole('img', { name: /Synthetic Synergy Score/u });
+
+    expect(lenses).toHaveLength(2);
+    expect(lenses[0]).toHaveAttribute('data-synergy-size', 'sm');
+    expect(lenses[0]).toHaveClass('h-24', 'w-24');
+    expect(within(lenses[0]!).getByText('92')).toBeVisible();
+    expect(within(lenses[0]!).getByText('Synergy')).toBeVisible();
+    expect(within(lenses[0]!).getByText('Synergy')).toHaveAttribute('data-synergy-label');
+    const gradientIds = Array.from(view.container.querySelectorAll('linearGradient')).map((node) => node.id);
+    expect(new Set(gradientIds).size).toBe(2);
   });
 
   it('renders only the comparison dimensions requested by the current board', () => {
@@ -82,6 +101,53 @@ describe('people-first visual stages', () => {
     expect(screen.getByRole('rowheader', { name: 'Monthly rent' })).toBeInTheDocument();
     expect(screen.getByRole('rowheader', { name: 'Household boundaries' })).toBeInTheDocument();
     expect(screen.queryByRole('rowheader', { name: 'Move timing' })).not.toBeInTheDocument();
+    expect(screen.getByRole('rowheader', { name: 'Monthly rent' })).toHaveClass('font-bold', 'text-text-primary', 'bg-neutral-50');
+    expect(screen.getByRole('table', { name: 'People and home comparison details' })).toHaveAttribute('data-comparison-surface', 'solid');
+  });
+
+  it('gives stage headlines a light-backed halo over the living field', () => {
+    render(
+      <MatchesStage
+        rooms={rooms}
+        selectedRefs={[]}
+        onToggle={() => undefined}
+        onExplain={() => undefined}
+        onCompare={() => undefined}
+      />,
+    );
+
+    expect(screen.getByRole('heading', { name: '2 people who may fit your life at home.' })).toHaveClass('stage-copy-halo');
+  });
+
+  it('keeps the person visually primary in the introduction stage', () => {
+    render(
+      <IntroductionStage
+        room={rooms[0]!}
+        introduction={{
+          draftRef: 'introduction_01_01',
+          roomRef: rooms[0]!.roomRef,
+          tone: 'warm',
+          highlightCodes: [],
+          draft: 'Hi Maya!',
+          isSafeToConfirm: true,
+        }}
+        notice={null}
+        onEdit={() => undefined}
+        onConfirm={() => undefined}
+      />,
+    );
+
+    expect(document.querySelector('[data-person-portrait="introduction"]')).toHaveClass('h-28', 'w-28');
+  });
+
+  it('uses the lighter CoHabby logo gradient and stronger dock copy', () => {
+    render(<ActionDock instruction="Watch your daily habits turn into roommate matches." status="Fictional people and homes." primaryLabel="Try the roommate demo" onPrimary={() => undefined} />);
+
+    expect(screen.getByText('Watch your daily habits turn into roommate matches.')).toHaveClass('font-bold', 'sm:text-lg');
+    expect(screen.getByRole('button', { name: 'Try the roommate demo' })).toHaveClass(
+      'bg-[linear-gradient(105deg,#FF896E_0%,#F4C95D_48%,#33B8AD_100%)]',
+      'text-text-primary',
+    );
   });
 
   it('uses the deterministic static living field when WebGL motion is unavailable', () => {

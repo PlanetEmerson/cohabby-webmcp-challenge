@@ -4,7 +4,7 @@ Target duration: 2 minutes 45 seconds to 2 minutes 55 seconds. Use CJ’s normal
 
 ## 0:00 to 0:14
 
-Show the real V3 opening screen, CoHabby app icon, headline, and six-step ribbon.
+Show the real submitted opening screen, CoHabby app icon, **Live with someone who gets you**, and the six-step ribbon.
 
 “CoHabby is about finding roommates who may live well together. I built this decision room so a person and their browser agent can work through that choice on the same page.”
 
@@ -20,11 +20,11 @@ Use the sample prompt. Show `get_living_context`, then `stage_living_brief`. Pau
 
 “The browser can read how I want to live and stage my must-haves, but it cannot approve them. I can check or change every choice first.”
 
-Click **Use these choices** yourself.
+Click **Yes, use these choices** yourself.
 
 ## 0:52 to 1:18
 
-Show `find_compatible_rooms` adding Maya, Jordan, and Sam with their fictional homes.
+Show `find_compatible_rooms` adding Maya, Jordan, and Sam with their fictional homes. Keep the larger portraits and Synergy gauges readable.
 
 “Now the page brings forward people, not just listings. Each person has practical home context and a fixed synthetic Synergy read.”
 

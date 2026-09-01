@@ -41,8 +41,18 @@ describe('people-first introduction template', () => {
     expect(draft).toContain('Hi Maya!');
     expect(draft).toContain('both prefer quiet mornings');
     expect(draft).toContain('within the approved budget');
-    expect(draft).toContain('roommate routines');
+    expect(draft).toContain('our home habits may fit');
+    expect(draft).toContain('compare how we each use shared space');
     expect(draft).not.toContain('92');
     expect(draft).not.toMatch(/caught my eye|chemistry|date|romance|relationship/i);
+  });
+
+  it('keeps every tone friendly, plain, and firmly about roommate life', () => {
+    const direct = buildIntroductionDraft({ room, tone: 'direct', highlightCodes: ['shared_space_fit'] });
+    const casual = buildIntroductionDraft({ room, tone: 'casual', highlightCodes: ['household_boundaries_fit'] });
+
+    expect(direct).toContain('Are you open to a quick chat about shared-space habits and the home?');
+    expect(casual).toContain('Want to compare roommate routines and talk about the home?');
+    expect(`${direct} ${casual}`).not.toMatch(/chemistry|date|romance|relationship|love to meet/i);
   });
 });

@@ -1,6 +1,17 @@
-# People-First Synergy V3 verification
+# People-First Synergy verification
 
 Date: September 1, 2026
+
+## V4 presentation candidate
+
+- The six WebMCP contracts, eight product phases, fixtures, and two human-only approvals remain unchanged.
+- The full local suite now contains 94 passing tests. TypeScript and ESLint pass with no errors or warnings.
+- Focused tests cover the larger person-first portraits, non-overlapping SVG Synergy gauge, solid comparison surface, stage text treatment, and lighter action gradient.
+- Local screenshots cover 360×800, 768×1024, 1296×1233, and 1440×900. The page has no horizontal overflow at 360 px.
+- The complete unsupported-browser path reaches the exact receipt with no app console error or failed app-origin request.
+- The live V3 deployment remains the rollback-safe baseline until the V4 clean-clone, production build, audit, and deployment checks pass.
+
+## V3 baseline release proof
 
 ## Local automated gate
 

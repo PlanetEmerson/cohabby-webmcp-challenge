@@ -49,11 +49,11 @@ describe('Craft Era text treatments', () => {
   });
 
   it.each([
-    ['coral CTA stop', '#FFFFFF', '#C2401F'],
-    ['middle CTA stop', '#FFFFFF', '#B64027'],
-    ['teal CTA stop', '#FFFFFF', '#00756B'],
+    ['light coral CTA stop', text.primary, '#FF896E'],
+    ['gold CTA stop', text.primary, '#F4C95D'],
+    ['light teal CTA stop', text.primary, '#33B8AD'],
     ['Synergy score', text.primary, '#FFFFFF'],
-  ])('%s keeps new V3 text contrast at WCAG AA', (_name, foreground, background) => {
+  ])('%s keeps new V4 text contrast at WCAG AA', (_name, foreground, background) => {
     expect(contrastRatio(foreground, background)).toBeGreaterThanOrEqual(4.5);
   });
 });

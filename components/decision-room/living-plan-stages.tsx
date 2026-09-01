@@ -49,9 +49,9 @@ export function ReadyStage({ onStart }: { onStart: () => void }) {
       className="mx-auto flex min-h-[510px] max-w-6xl flex-col justify-center py-5 sm:py-8"
     >
       <div className="mx-auto max-w-3xl text-center">
-        <p className="font-display text-sm font-bold uppercase tracking-[0.16em] text-primary-ink">A synthetic roommate search</p>
-        <h2 className="mt-2 font-display text-3xl font-bold tracking-[-0.03em] text-text-primary sm:text-4xl">Start with how home should feel.</h2>
-        <p className="mx-auto mt-2 max-w-2xl text-body-lg text-text-secondary">Everyday rhythms give CoHabby a practical place to begin looking for compatible people.</p>
+        <p className="stage-copy-soft font-display text-sm font-bold uppercase tracking-[0.16em] text-primary-ink">A quick roommate demo</p>
+        <h2 className="stage-copy-halo mt-2 font-display text-3xl font-bold tracking-[-0.03em] text-text-primary sm:text-4xl">Show CoHabby how you like to live.</h2>
+        <p className="stage-copy-soft mx-auto mt-2 max-w-2xl text-body-lg text-text-secondary">Start with a few everyday choices. We&apos;ll use them to find roommates who may fit your life at home.</p>
       </div>
 
       <div className="mt-7">
@@ -68,9 +68,9 @@ export function ReadyStage({ onStart }: { onStart: () => void }) {
       </ul>
 
       <ActionDock
-        instruction="See how CoHabby turns living habits into a roommate decision."
-        status="Fictional people, homes, and Synergy Scores"
-        primaryLabel="Start with this demo plan"
+        instruction="Watch your daily habits turn into roommate matches."
+        status="Fictional people, homes, and Synergy Scores."
+        primaryLabel="Try the roommate demo"
         onPrimary={onStart}
       />
     </m.section>
@@ -147,11 +147,11 @@ export function PlanReviewStage({
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-display text-sm font-bold uppercase tracking-[0.16em] text-primary-ink">Your choices stay yours</p>
-          <h2 className="mt-1 font-display text-3xl font-bold tracking-[-0.03em] text-text-primary sm:text-4xl">Check your living plan.</h2>
-          <p className="mt-2 text-body-lg text-text-secondary">These practical choices guide the roommate search. You decide when they are ready.</p>
+          <p className="stage-copy-soft font-display text-sm font-bold uppercase tracking-[0.16em] text-primary-ink">Your choices, your call</p>
+          <h2 className="stage-copy-halo mt-1 font-display text-3xl font-bold tracking-[-0.03em] text-text-primary sm:text-4xl">Does this feel like you?</h2>
+          <p className="stage-copy-soft mt-2 text-body-lg text-text-secondary">Check the details. Change anything that does not fit before CoHabby looks for roommates.</p>
         </div>
-        <div className="rounded-full border border-primary/25 bg-primary-surface px-4 py-2 font-display text-sm font-semibold text-primary-ink">Waiting for you</div>
+        <div className="rounded-full border border-primary/25 bg-primary-surface px-4 py-2 font-display text-sm font-semibold text-primary-ink">Waiting for your approval</div>
       </div>
 
       <div className="mt-6 grid gap-x-4 gap-y-5 rounded-[1.5rem] bg-white/78 p-4 shadow-card backdrop-blur sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
@@ -180,9 +180,9 @@ export function PlanReviewStage({
       {!valid ? <p role="status" className="mt-3 rounded-xl bg-warning-surface px-4 py-3 text-body-sm font-medium text-warning-dark">Choose one of the practical options shown here.</p> : null}
 
       <ActionDock
-        instruction="Only you can approve these choices."
-        status="Your browser agent cannot take this step for you."
-        primaryLabel="Use these choices"
+        instruction="Approve these choices before the search begins."
+        status="Your browser agent cannot approve them for you."
+        primaryLabel="Yes, use these choices"
         primaryDisabled={!valid}
         onPrimary={() => onMutation('apply_brief', () => store.applyBriefByHuman(proposal.proposalRef))}
         secondaryLabel="Start over"
@@ -214,14 +214,14 @@ export function PlanAppliedStage({
     >
       <div className="mx-auto w-full max-w-4xl text-center">
         <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-success-surface text-success-dark shadow-sm"><Sparkles className="h-7 w-7" aria-hidden="true" /></span>
-        <h2 className="mt-4 font-display text-3xl font-bold tracking-[-0.03em] text-text-primary sm:text-4xl">Your choices are ready.</h2>
-        <p className="mx-auto mt-2 max-w-2xl text-body-lg text-text-secondary">Now CoHabby can bring forward fictional roommates whose household rhythms and practical home needs line up.</p>
+        <h2 className="stage-copy-halo mt-4 font-display text-3xl font-bold tracking-[-0.03em] text-text-primary sm:text-4xl">Your living plan is ready.</h2>
+        <p className="stage-copy-soft mx-auto mt-2 max-w-2xl text-body-lg text-text-secondary">Next, CoHabby will find fictional people whose home habits may fit yours.</p>
         <div className="mt-6 text-left"><LivingPlanTiles brief={state.appliedBrief ?? sampleLivingPlan} /></div>
       </div>
       <ActionDock
-        instruction="Next, meet people with compatible ways of living."
+        instruction="Ready to meet your roommate matches?"
         status="People first. Home details second."
-        primaryLabel={busy ? 'Finding people + homes…' : 'Show people and homes'}
+        primaryLabel={busy ? 'Finding people...' : 'Show my matches'}
         primaryDisabled={busy}
         onPrimary={onFind}
       />

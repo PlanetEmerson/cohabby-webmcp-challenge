@@ -34,9 +34,9 @@ export function IntroductionStage({
       className="mx-auto min-h-[510px] max-w-6xl py-3"
     >
       <div className="mb-5 text-center">
-        <p className="font-display text-sm font-bold uppercase tracking-[0.16em] text-success-dark">A first roommate hello</p>
-        <h2 className="mt-1 font-display text-3xl font-bold tracking-[-0.03em] text-text-primary sm:text-4xl">Make the introduction human.</h2>
-        <p className="mt-2 text-body-lg text-text-secondary">CoHabby prepared the practical starting point. You control every word and the final confirmation.</p>
+        <p className="stage-copy-soft font-display text-sm font-bold uppercase tracking-[0.16em] text-success-dark">Your first roommate hello</p>
+        <h2 className="stage-copy-halo mt-1 font-display text-3xl font-bold tracking-[-0.03em] text-text-primary sm:text-4xl">Start the conversation in your own words.</h2>
+        <p className="stage-copy-soft mt-2 text-body-lg text-text-secondary">CoHabby wrote a starting point for {name}. Read it, change it, then decide.</p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[0.82fr_1.18fr]">
@@ -50,7 +50,7 @@ export function IntroductionStage({
             <Image src={roomVisualFor(room.roomRef)} alt={`Synthetic demo home context for ${name}`} fill sizes="(max-width: 1023px) 100vw, 40vw" className="object-cover" />
             <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-neutral-950/75 to-transparent" aria-hidden="true" />
             <div className="absolute bottom-4 left-4 right-4 flex items-end gap-3 text-white">
-              <span className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[1.25rem] border-[3px] border-white bg-neutral-100 shadow-md"><Image src={personVisualFor(room.housemate.personRef)} alt={`Synthetic demo portrait of ${name}`} fill sizes="80px" className="object-cover" /></span>
+              <span data-person-portrait="introduction" className="relative h-28 w-28 shrink-0 overflow-hidden rounded-[1.5rem] border-[4px] border-white bg-neutral-100 shadow-lg"><Image src={personVisualFor(room.housemate.personRef)} alt={`Synthetic demo portrait of ${name}`} fill sizes="112px" className="object-cover" /></span>
               <span><span className="block font-display text-3xl font-bold leading-none">{name}</span><span className="mt-1 block text-sm text-white/90">Possible roommate</span></span>
             </div>
           </div>
@@ -72,10 +72,10 @@ export function IntroductionStage({
         <section className="flex flex-col rounded-[1.6rem] bg-white/90 p-4 shadow-elevated backdrop-blur sm:p-6" aria-label="Review roommate introduction">
           <div className="flex items-start gap-3">
             <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-success-surface text-success-dark"><MessageSquareText className="h-5 w-5" aria-hidden="true" /></span>
-            <div><p className="font-display text-sm font-bold uppercase tracking-[0.14em] text-success-dark">Your words, your decision</p><h3 className="mt-0.5 font-display text-2xl font-bold text-text-primary">Check the roommate note.</h3></div>
+            <div><p className="font-display text-sm font-bold uppercase tracking-[0.14em] text-success-dark">Your words, your choice</p><h3 className="mt-0.5 font-display text-2xl font-bold text-text-primary">Check the hello before you confirm.</h3></div>
           </div>
           <label className="mt-5 flex flex-1 flex-col gap-2 font-display text-sm font-semibold text-text-secondary">
-            Introduction draft
+            Your hello to {name}
             <textarea
               aria-label="Introduction draft"
               value={introduction.draft}
@@ -91,7 +91,7 @@ export function IntroductionStage({
       </div>
 
       <ActionDock
-        instruction={`Confirm this demo introduction to ${name}.`}
+        instruction={`Happy with this hello to ${name}?`}
         status="Nothing is sent, saved, or shared."
         primaryLabel="Confirm demo introduction"
         primaryDisabled={!introduction.isSafeToConfirm}
@@ -125,11 +125,11 @@ export function SuccessStage({ receipt, onReset }: { receipt: string; onReset: (
         <m.span initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.25, duration: 0.35 }} className="relative z-10 grid h-20 w-20 place-items-center rounded-[1.35rem] border-4 border-white bg-success-surface text-success-dark shadow-elevated"><House className="h-9 w-9" /></m.span>
         <m.span initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.45, type: 'spring', stiffness: 280, damping: 18 }} className="absolute right-16 top-4 grid h-10 w-10 place-items-center rounded-full bg-success text-white shadow-md"><Check className="h-5 w-5" /></m.span>
       </div>
-      <p className="font-display text-sm font-bold uppercase tracking-[0.16em] text-success-dark">Roommate introduction ready</p>
-      <h2 className="mt-2 max-w-3xl font-display text-4xl font-bold tracking-[-0.04em] text-text-primary sm:text-5xl">A thoughtful start to living well together.</h2>
+      <p className="stage-copy-soft font-display text-sm font-bold uppercase tracking-[0.16em] text-success-dark">Demo complete</p>
+      <h2 className="stage-copy-halo mt-2 max-w-3xl font-display text-4xl font-bold tracking-[-0.04em] text-text-primary sm:text-5xl">A better shared home starts with the right person.</h2>
       <p className="mt-4 rounded-full border border-success/25 bg-success-surface px-5 py-3 font-display text-base font-semibold text-success-dark">{receipt}</p>
-      <p className="mt-4 max-w-xl text-body-md leading-relaxed text-text-secondary">The browser agent organized the decision. You approved the living plan and confirmed the practical roommate hello.</p>
-      <Button variant="ghost" size="lg" className="mt-5" onClick={onReset}><Sparkles className="h-4 w-4" aria-hidden="true" />Start another demo</Button>
+      <p className="stage-copy-soft mt-4 max-w-xl text-body-md leading-relaxed text-text-secondary">Your browser agent did the legwork. You made the choices.</p>
+      <Button variant="ghost" size="lg" className="mt-5" onClick={onReset}><Sparkles className="h-4 w-4" aria-hidden="true" />Try another roommate search</Button>
     </m.section>
   );
 }

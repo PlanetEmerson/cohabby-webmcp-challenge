@@ -33,8 +33,8 @@ export function ActionDock({
           <SlidersHorizontal className="h-5 w-5" aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <p className="text-sm font-semibold leading-snug text-text-primary sm:text-body-md">{instruction}</p>
-          {status ? <p className="mt-0.5 hidden text-body-sm text-text-secondary sm:block" aria-live="polite">{status}</p> : null}
+          <p className="text-sm font-bold leading-snug text-text-primary sm:text-lg">{instruction}</p>
+          {status ? <p className="mt-0.5 hidden text-body-sm font-medium text-text-secondary sm:block" aria-live="polite">{status}</p> : null}
         </div>
       </div>
       <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
@@ -44,7 +44,7 @@ export function ActionDock({
         <Button
           disabled={primaryDisabled}
           onClick={onPrimary}
-          className="min-w-[210px] bg-[linear-gradient(105deg,#C2401F_0%,#B64027_42%,#00756B_100%)] text-white shadow-[0_10px_28px_rgba(0,117,107,0.2)] hover:brightness-105 focus-visible:ring-info max-sm:w-full"
+          className="min-w-[210px] border border-white/70 bg-[linear-gradient(105deg,#FF896E_0%,#F4C95D_48%,#33B8AD_100%)] text-text-primary shadow-[0_10px_28px_rgba(0,143,131,0.18)] hover:brightness-105 focus-visible:ring-info max-sm:w-full"
         >
           {primaryLabel}
           <ArrowRight className="h-4 w-4" aria-hidden="true" />

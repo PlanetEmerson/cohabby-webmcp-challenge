@@ -4,7 +4,7 @@
 
 - Live app: [https://webmcp.cohabby.com](https://webmcp.cohabby.com)
 - Public source: [https://github.com/PlanetEmerson/cohabby-webmcp-challenge](https://github.com/PlanetEmerson/cohabby-webmcp-challenge)
-- Judged source tag: `submission-2026-09-03-people-first-v3`
+- Judged source tag: `submission-2026-09-03-people-first-v4`
 - YouTube demo: pending CJ narration and public upload
 
 ## Project title
@@ -13,7 +13,7 @@ CoHabby Living Decision Room
 
 ## Tagline
 
-Meet a compatible roommate with your browser agent on one shared, human-controlled page.
+Live with someone who gets you. Your browser agent sorts the options. You choose who to meet.
 
 ## Short description
 
@@ -29,7 +29,7 @@ The agent does not call another agent. It uses CoHabby’s page directly. Each t
 
 The first screen gives the person one obvious next step. After that, the action stays in the same place. The page shows one stage at a time, so people do not have to search through a stack of old panels.
 
-The search puts possible roommates first and keeps the home as practical context. A person can see the portrait, household rhythm, synthetic Synergy read, rent, timing, and reason labels together. The Synergy Lens explains the read before comparison. The comparison makes the person and tone choice explicit before the note appears.
+The search puts possible roommates first and keeps the home as practical context. Large portraits, clear Synergy gauges, and plain labels make the next choice easy to see. A person can scan the household rhythm, synthetic Synergy read, rent, timing, and reasons together. The Synergy Lens explains the read before comparison. The comparison makes the person and tone choice explicit before the hello appears.
 
 The full flow works without WebMCP, so an unsupported browser still gets the complete product path.
 
