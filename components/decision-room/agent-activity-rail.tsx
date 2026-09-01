@@ -13,6 +13,8 @@ import type { DecisionRoomActivitySnapshot } from '@/lib/decision-room/activity-
 import type { DecisionRoomPhase } from '@/lib/decision-room/types';
 import { cn } from '@/lib/utils/cn';
 
+export type SiteToolsStatus = 'checking' | 'ready' | 'unsupported' | 'error';
+
 const phaseRank: Record<DecisionRoomPhase, number> = {
   READY: 0,
   BRIEF_STAGED: 1,
@@ -66,9 +68,11 @@ function activityMessage(activity: DecisionRoomActivitySnapshot): string {
 export function AgentActivityRail({
   phase,
   activity,
+  siteToolsStatus,
 }: {
   phase: DecisionRoomPhase;
   activity: DecisionRoomActivitySnapshot;
+  siteToolsStatus: SiteToolsStatus;
 }) {
   const rank = phaseRank[phase];
   return (
@@ -127,6 +131,11 @@ export function AgentActivityRail({
       <p className="mt-4 min-h-10 rounded-xl bg-neutral-50 px-3 py-2 text-body-sm leading-relaxed text-text-secondary" aria-live="polite">
         {activityMessage(activity)}
       </p>
+      {siteToolsStatus === 'unsupported' || siteToolsStatus === 'error' ? (
+        <p className="mt-2 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-body-sm leading-relaxed text-text-secondary">
+          Site tools are not available here. You can still use the full demo on this page.
+        </p>
+      ) : null}
     </aside>
   );
 }

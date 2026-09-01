@@ -26,7 +26,7 @@ import {
   useSyncExternalStore,
 } from 'react';
 
-import { AgentActivityRail } from '@/components/decision-room/agent-activity-rail';
+import { AgentActivityRail, type SiteToolsStatus } from '@/components/decision-room/agent-activity-rail';
 import {
   BrandDoorwayMark,
   ComparisonStage,
@@ -197,10 +197,10 @@ function BriefProposal({
   );
 }
 
-function SiteToolsBadge({ status }: { status: 'checking' | 'ready' | 'unsupported' | 'error' }) {
+function SiteToolsBadge({ status }: { status: SiteToolsStatus }) {
   return (
     <div className={cn(
-      'inline-flex min-h-11 items-center gap-2 rounded-full border px-3 text-body-sm font-semibold',
+      'inline-flex min-h-11 w-[184px] items-center justify-center gap-2 rounded-full border px-3 text-body-sm font-semibold',
       status === 'ready' ? 'border-success/30 bg-success-surface text-success-dark' :
         status === 'error' ? 'border-error/30 bg-error-surface text-error-dark' : 'border-neutral-200 bg-white text-text-secondary',
     )} role="status" aria-label="Site tools status">
@@ -272,7 +272,7 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
   const activity = activityRef.current;
   const state = useSyncExternalStore(store.subscribe, store.getState, store.getState);
   const activitySnapshot = useSyncExternalStore(activity.subscribe, activity.getSnapshot, activity.getSnapshot);
-  const [siteToolsStatus, setSiteToolsStatus] = useState<'checking' | 'ready' | 'unsupported' | 'error'>('checking');
+  const [siteToolsStatus, setSiteToolsStatus] = useState<SiteToolsStatus>('checking');
   const [selectedRefs, setSelectedRefs] = useState<string[]>([]);
   const [introRoomRef, setIntroRoomRef] = useState('');
   const [introTone, setIntroTone] = useState<'warm' | 'direct' | 'casual'>('warm');
@@ -374,8 +374,6 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
               </div>
             </header>
 
-            {siteToolsStatus === 'unsupported' ? <p className="mt-3 rounded-xl border border-neutral-200 bg-neutral-0 px-4 py-2.5 text-body-sm text-text-secondary">Site tools are not available here. You can still use the full demo on this page.</p> : null}
-
             <section className="grid gap-5 pb-4 pt-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:pt-8">
               <div>
                 <p className="font-display text-sm font-semibold uppercase tracking-[0.16em] text-primary-ink">One room decision. Made together.</p>
@@ -453,7 +451,7 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
                   </div>
                 </div>
                 <div className="order-2 lg:order-1">
-                  <AgentActivityRail phase={state.phase} activity={activitySnapshot} />
+                  <AgentActivityRail phase={state.phase} activity={activitySnapshot} siteToolsStatus={siteToolsStatus} />
                 </div>
               </section>
             </LayoutGroup>

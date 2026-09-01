@@ -4,7 +4,7 @@ The challenge app uses no photos, video, map imagery, resident likenesses, listi
 
 | Asset | Source and rights | Use |
 | --- | --- | --- |
-| CoHabby text name and challenge doorway mark | The name is owned by CoHabby. The SVG doorway mark was drawn in this repository from the public Craft Era colors with the founder's permission. | Header identity and selected-room transition |
+| CoHabby text name and challenge doorway mark | The name is owned by CoHabby. The SVG doorway mark was drawn in this repository from the public Craft Era colors with the founder's permission. | Header identity, favicon, and selected-room transition |
 | Outfit font | Google Fonts, SIL Open Font License 1.1, bundled at build time by `next/font` | Headings, labels, and buttons |
 | Lucide icons | `lucide-react`, ISC License | Interface icons |
 | Motion for React | `motion`, MIT License | Layout and causal state transitions |

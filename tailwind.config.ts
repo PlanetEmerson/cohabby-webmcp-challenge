@@ -27,25 +27,25 @@ const config: Config = {
         success: {
           DEFAULT: '#34C759',
           light: '#53D769',
-          dark: '#28A745',
+          dark: '#176B2C',
           surface: '#E7F8EC',
         },
         warning: {
           DEFAULT: '#E1A33B',
           light: '#E7B562',
-          dark: '#B4822F',
+          dark: '#76520D',
           surface: '#FBF4E7',
         },
         accent: {
           DEFAULT: '#FF9800',
           light: '#FFAD33',
-          dark: '#F57C00',
+          dark: '#8A4700',
           surface: '#FFF3E0',
         },
         gold: {
           DEFAULT: '#F4C95D',
           light: '#F7D87D',
-          dark: '#D4A93D',
+          dark: '#715510',
           surface: '#FDF8EC',
         },
         error: {
@@ -70,8 +70,8 @@ const config: Config = {
         },
         text: {
           primary: '#2B1F19',
-          secondary: '#7A6557',
-          tertiary: '#997F6E',
+          secondary: '#5A4639',
+          tertiary: '#7A6557',
           disabled: '#B89F8F',
         },
       },
