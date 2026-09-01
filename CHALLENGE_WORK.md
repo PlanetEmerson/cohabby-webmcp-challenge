@@ -25,7 +25,7 @@ The following work is new for the challenge:
 - A separate visible activity store that records browser-agent and human actions without changing the seven-phase product state machine.
 - Public tests, setup instructions, provenance notes, demo script, and submission copy.
 
-The challenge commit range begins at `7df5d15`. The immutable `submission-2026-09-03` tag preserves the first complete version. The redesigned judged revision is marked by `submission-2026-09-03-final`, and the live footer shows its exact deployed SHA.
+The challenge commit range begins at `7df5d15`. The immutable `submission-2026-09-03` tag preserves the first complete version, and `submission-2026-09-03-final` preserves the first Matchboard redesign. The accessibility and performance-audited judged revision is marked by `submission-2026-09-03-polished`, and the live footer shows its exact deployed SHA.
 
 ## Public tools
 

@@ -74,7 +74,7 @@ The confirmation receipt says exactly: `Demo confirmed. No real message was sent
 
 CoHabby existed before the challenge. Living Decision Room, its five WebMCP tools, synthetic data, comparison board, confirmation flow, and this public repository were created during the WebMCP Challenge submission period. [CHALLENGE_WORK.md](./CHALLENGE_WORK.md) separates that work from the existing product.
 
-The live footer prints the source revision supplied at deployment. The original `submission-2026-09-03` tag preserves the first complete build. The immutable `submission-2026-09-03-final` tag identifies the redesigned judged source.
+The live footer prints the source revision supplied at deployment. The original `submission-2026-09-03` tag preserves the first complete build, and `submission-2026-09-03-final` preserves the first Matchboard redesign. The immutable `submission-2026-09-03-polished` tag identifies the accessibility and performance-audited judged source.
 
 The automated, browser, responsive, and isolation checks are summarized in [Living Matchboard verification](./docs/MATCHBOARD_EVIDENCE.md).
 
