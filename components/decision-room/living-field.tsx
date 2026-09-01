@@ -1,15 +1,14 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
 import type { LivingMatchboardStage } from '@/lib/decision-room/visual-stage';
 import { cn } from '@/lib/utils/cn';
 
-const MeshGradient = dynamic(
-  () => import('@paper-design/shaders-react').then((module) => module.MeshGradient),
-  { ssr: false },
-);
+const MeshGradient = lazy(async () => {
+  const shaders = await import('@paper-design/shaders-react');
+  return { default: shaders.MeshGradient };
+});
 
 type NavigatorWithConnection = Navigator & {
   connection?: { saveData?: boolean };
@@ -36,8 +35,9 @@ export function LivingField({ stage }: { stage: LivingMatchboardStage }) {
   const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
-    setAnimated(canAnimateShader());
-  }, []);
+    const shaderEligible = stage !== 'ready' && stage !== 'brief';
+    setAnimated(shaderEligible && canAnimateShader());
+  }, [stage]);
 
   return (
     <div
@@ -50,20 +50,22 @@ export function LivingField({ stage }: { stage: LivingMatchboardStage }) {
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_5%,rgba(255,107,74,0.52),transparent_34%),radial-gradient(circle_at_90%_20%,rgba(0,166,153,0.42),transparent_38%),radial-gradient(circle_at_52%_105%,rgba(244,201,93,0.36),transparent_40%)]" />
       {animated ? (
-        <MeshGradient
-          className="absolute inset-0 h-full w-full"
-          width="100%"
-          height="100%"
-          colors={['#FF896E', '#FFEFE9', '#F4C95D', '#E3F4F1', '#33B8AD']}
-          distortion={stage === 'synergy' ? 0.72 : 0.44}
-          swirl={stage === 'synergy' ? 0.52 : 0.28}
-          grainMixer={0.12}
-          grainOverlay={0.035}
-          speed={0.045}
-          frame={0}
-          minPixelRatio={0.75}
-          maxPixelCount={750_000}
-        />
+        <Suspense fallback={null}>
+          <MeshGradient
+            className="absolute inset-0 h-full w-full"
+            width="100%"
+            height="100%"
+            colors={['#FF896E', '#FFEFE9', '#F4C95D', '#E3F4F1', '#33B8AD']}
+            distortion={stage === 'synergy' ? 0.72 : 0.44}
+            swirl={stage === 'synergy' ? 0.52 : 0.28}
+            grainMixer={0.12}
+            grainOverlay={0.035}
+            speed={0.045}
+            frame={0}
+            minPixelRatio={0.75}
+            maxPixelCount={750_000}
+          />
+        </Suspense>
       ) : null}
       <div className="absolute inset-0 bg-white/46" />
     </div>

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildSecurityHeaders } from '@/lib/security/headers';
+import nextConfig from '../../next.config';
 
 describe('challenge security headers', () => {
   it('enables same-origin WebMCP while excluding every production service', () => {
@@ -14,5 +15,9 @@ describe('challenge security headers', () => {
     expect(headers['Strict-Transport-Security']).toBe('max-age=31536000; includeSubDomains');
     expect(headers['Content-Security-Policy']).toContain("default-src 'self'");
     expect(headers['Content-Security-Policy']).not.toMatch(/firebase|stripe|googleapis|cohabby\.com|openai|analytics/i);
+  });
+
+  it('does not advertise the framework in production responses', () => {
+    expect(nextConfig.poweredByHeader).toBe(false);
   });
 });
