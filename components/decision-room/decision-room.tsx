@@ -53,6 +53,9 @@ const optionLabels: Record<string, string> = {
   outdoor_only: 'Outdoor only',
   early_evenings: 'Early evenings',
   late_evenings: 'Late evenings',
+  strong: 'Strong',
+  good: 'Good',
+  possible: 'Possible',
 };
 
 function label(value: unknown): string {
@@ -339,12 +342,12 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
   return (
     <main className="min-h-screen bg-neutral-50 text-text-primary">
       <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-7 lg:py-9">
-        <header className="flex flex-wrap items-center justify-between gap-3">
+        <header className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-text-primary">
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-white" aria-hidden="true">C</span>
             CoHabby
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2">
             <div className={cn(
               'inline-flex min-h-11 items-center gap-2 rounded-full border px-3 text-body-sm font-medium',
               siteToolsStatus === 'ready' ? 'border-success/30 bg-success-surface text-success-dark' :
