@@ -17,6 +17,7 @@ const eslintConfig = [
       ".next/**",
       "out/**",
       "build/**",
+      "lib/webmcp/generated/**",
       "next-env.d.ts",
     ],
   },

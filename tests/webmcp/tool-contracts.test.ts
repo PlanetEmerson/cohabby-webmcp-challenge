@@ -1,8 +1,30 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { parseToolInput, ToolContractError } from '@/lib/webmcp/tool-contracts';
 
 describe('WebMCP input contracts', () => {
+  it('executes the generated validators as native ESM without a CommonJS require global', () => {
+    const moduleUrl = pathToFileURL(path.resolve('lib/webmcp/generated/tool-validators.mjs')).href;
+    const script = `const validators = await import(${JSON.stringify(moduleUrl)}); if (!validators.validateStageLivingBrief({ market: 'New York' })) process.exit(2);`;
+    expect(() => execFileSync(process.execPath, ['--input-type=module', '--eval', script]))
+      .not.toThrow();
+  });
+
+  it('loads and validates without access to the Function constructor required by unsafe-eval', async () => {
+    const originalFunction = globalThis.Function;
+    vi.resetModules();
+    globalThis.Function = function blockedFunction(): never {
+      throw new EvalError('unsafe-eval blocked');
+    } as unknown as FunctionConstructor;
+    try {
+      const contracts = await import('@/lib/webmcp/tool-contracts');
+      expect(contracts.parseToolInput('get_living_context', {})).toEqual({});
+    } finally {
+      globalThis.Function = originalFunction;
+      vi.resetModules();
+    }
+  });
+
   it('accepts the exact bounded inputs for all five public tools', () => {
     expect(parseToolInput('get_living_context', {})).toEqual({});
     expect(parseToolInput('find_compatible_rooms', {
@@ -77,3 +99,6 @@ describe('WebMCP input contracts', () => {
     })).toThrowError(new ToolContractError('unsafe_housing_request'));
   });
 });
+import { execFileSync } from 'node:child_process';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';

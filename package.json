@@ -7,6 +7,8 @@
   },
   "scripts": {
     "dev": "next dev",
+    "generate:validators": "vite-node scripts/generate-tool-validators.ts",
+    "prebuild": "npm run generate:validators",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
