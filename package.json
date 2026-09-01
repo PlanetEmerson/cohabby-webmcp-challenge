@@ -20,6 +20,7 @@
     "verify": "npm run test && npm run type-check && npm run lint && npm run build && npm run audit:prod"
   },
   "dependencies": {
+    "@paper-design/shaders-react": "0.0.80",
     "ajv": "8.20.0",
     "clsx": "2.1.1",
     "lucide-react": "0.563.0",

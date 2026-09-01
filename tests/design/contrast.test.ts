@@ -47,4 +47,13 @@ describe('Craft Era text treatments', () => {
   ])('%s meets WCAG AA for normal text', (_name, foreground, background) => {
     expect(contrastRatio(foreground, background)).toBeGreaterThanOrEqual(4.5);
   });
+
+  it.each([
+    ['coral CTA stop', '#FFFFFF', '#C2401F'],
+    ['middle CTA stop', '#FFFFFF', '#B64027'],
+    ['teal CTA stop', '#FFFFFF', '#00756B'],
+    ['Synergy score', text.primary, '#FFFFFF'],
+  ])('%s keeps new V3 text contrast at WCAG AA', (_name, foreground, background) => {
+    expect(contrastRatio(foreground, background)).toBeGreaterThanOrEqual(4.5);
+  });
 });

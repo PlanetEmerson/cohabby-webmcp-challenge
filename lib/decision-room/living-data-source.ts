@@ -159,7 +159,7 @@ const reasonLabels: Record<SafeReasonCode, string> = {
   pet_fit: 'Works with the approved pet need',
   smoke_free_fit: 'Matches the smoking preference',
   quiet_time_fit: 'Supports the preferred evening rhythm',
-  house_rules_fit: 'Shared-home rules support the brief',
+  house_rules_fit: 'Shared-home rules support the living plan',
   daily_rhythm_fit: 'Daily rhythms align',
   shared_space_fit: 'Shared-space expectations align',
   household_boundaries_fit: 'Household boundaries align',

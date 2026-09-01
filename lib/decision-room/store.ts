@@ -250,7 +250,7 @@ export function createDecisionRoomStore(dataSource: LivingDataSource = synthetic
         introduction: null,
         receipt: null,
         notice: result.rooms.length === 0
-          ? { kind: 'info', message: 'No demo rooms match this brief yet.' }
+          ? { kind: 'info', message: 'No demo roommates match this living plan yet.' }
           : null,
       });
       return {
@@ -292,6 +292,20 @@ export function createDecisionRoomStore(dataSource: LivingDataSource = synthetic
         personRef: room.housemate.personRef,
         stateVersion: nextVersion,
       };
+    },
+    returnToResultsByHuman() {
+      if (state.phase !== 'SYNERGY_EXPLAINED' || !state.results) {
+        throw new DecisionRoomError('invalid_state');
+      }
+      const nextVersion = state.stateVersion + 1;
+      publish({
+        ...state,
+        stateVersion: nextVersion,
+        phase: 'RESULTS_READY',
+        synergyExplanation: null,
+        notice: null,
+      });
+      return { stateVersion: nextVersion };
     },
     compareShortlist(input: CompareShortlistInput) {
       if (

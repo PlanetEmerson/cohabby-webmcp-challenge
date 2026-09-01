@@ -199,6 +199,23 @@ describe('DecisionRoomStore', () => {
     expect(store.getState()).toMatchObject({ phase: 'RESULTS_READY', stateVersion: 4, synergyExplanation: null });
   });
 
+  it('lets only the human return from a Synergy explanation to the current people and homes', async () => {
+    const store = createDecisionRoomStore();
+    const staged = store.stageLivingBrief(sampleBrief);
+    store.applyBriefByHuman(staged.proposalRef);
+    await store.findCompatibleRooms({ limit: 6, order: 'best_fit' }, new AbortController().signal);
+    store.explainSynergyMatch({ roomRef: 'room_nyc_cedar' });
+
+    expect(store.returnToResultsByHuman()).toEqual({ stateVersion: 6 });
+    expect(store.getState()).toMatchObject({
+      phase: 'RESULTS_READY',
+      stateVersion: 6,
+      synergyExplanation: null,
+      results: { generation: 1 },
+    });
+    expect(() => store.returnToResultsByHuman()).toThrowError(new DecisionRoomError('invalid_state'));
+  });
+
   it('keeps contact details out of a human-confirmed demo introduction', async () => {
     const store = createDecisionRoomStore();
     const staged = store.stageLivingBrief(sampleBrief);

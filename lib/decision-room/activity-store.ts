@@ -7,6 +7,7 @@ export type DecisionRoomActivityAction =
   | 'stage_living_brief'
   | 'find_compatible_rooms'
   | 'explain_synergy_match'
+  | 'return_to_results'
   | 'compare_shortlist'
   | 'prepare_introduction'
   | 'apply_brief'

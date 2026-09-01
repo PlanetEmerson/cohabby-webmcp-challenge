@@ -25,10 +25,10 @@ export function buildIntroductionDraft(input: Readonly<{
     : 'The practical details look like a good fit for my current search.';
 
   if (input.tone === 'direct') {
-    return `Hi ${input.room.housemate.displayName}, I'm interested in ${input.room.headline}. ${reasons} Could we talk through availability and how the home works day to day?`;
+    return `Hi ${input.room.housemate.displayName}, it looks like our roommate routines may line up. ${reasons} I'm also considering ${input.room.headline}. Could we compare how we each use shared space and talk through availability?`;
   }
   if (input.tone === 'casual') {
-    return `Hi ${input.room.housemate.displayName}! ${input.room.headline} caught my eye. ${reasons} I'd be happy to chat about the room and how the home works day to day.`;
+    return `Hi ${input.room.housemate.displayName}! It looks like our roommate routines may line up. ${reasons} I'd be happy to compare how we each use shared space and talk about ${input.room.headline}.`;
   }
-  return `Hi ${input.room.housemate.displayName}! I'm interested in ${input.room.headline}. ${reasons} I'd love to learn more about you and how the home works day to day.`;
+  return `Hi ${input.room.housemate.displayName}! It looks like our roommate routines may line up. ${reasons} I'd like to compare how we each use shared space and learn how the home works day to day.`;
 }

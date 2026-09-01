@@ -41,6 +41,8 @@ describe('people-first introduction template', () => {
     expect(draft).toContain('Hi Maya!');
     expect(draft).toContain('both prefer quiet mornings');
     expect(draft).toContain('within the approved budget');
+    expect(draft).toContain('roommate routines');
     expect(draft).not.toContain('92');
+    expect(draft).not.toMatch(/caught my eye|chemistry|date|romance|relationship/i);
   });
 });

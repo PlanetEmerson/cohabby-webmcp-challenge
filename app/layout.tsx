@@ -11,9 +11,10 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://webmcp.cohabby.com'),
-  title: 'CoHabby Living Decision Room',
-  description: 'Turn a living brief into room cards, a decision line, and a human-approved introduction with your browser agent.',
+  title: 'Meet a compatible roommate | CoHabby Living Decision Room',
+  description: 'Use six WebMCP tools to explore fictional roommates, synthetic Synergy reads, home context, and a human-approved introduction.',
   applicationName: 'CoHabby Living Decision Room',
+  icons: { icon: '/assets/brand/cohabby-app-icon.png' },
   robots: { index: true, follow: true },
   other: { 'theme-color': '#FBF5F1' },
 };
