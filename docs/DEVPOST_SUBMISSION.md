@@ -1,5 +1,12 @@
 # Devpost submission copy
 
+## Submission links
+
+- Live app: [https://webmcp.cohabby.com](https://webmcp.cohabby.com)
+- Public source: [https://github.com/PlanetEmerson/cohabby-webmcp-challenge](https://github.com/PlanetEmerson/cohabby-webmcp-challenge)
+- Judged source tag: `submission-2026-09-03-people-first-v3`
+- YouTube demo: pending CJ narration and public upload
+
 ## Project title
 
 CoHabby Living Decision Room

@@ -27,17 +27,34 @@ Date: September 1, 2026
 - The same pass produced no console error, page error, or failed app-origin request. The introduction safety gate disabled confirmation for a phone number and exact street, then re-enabled it for a safe roommate note.
 - With reduced motion enabled, the results stage kept `data-living-field="static"` and did not mount the WebGL shader.
 
-## Release proof still required on the final public SHA
+## Public release proof
 
-- Fresh public-tag clone: install, 89-test suite, type-check, lint, production build, dependency audit, and diff check.
-- GPT-5.6 Sol: complete the six-tool path twice from reset.
-- GPT-5.6 Terra: complete the six-tool path once.
-- Chrome 149 or later with WebMCP testing enabled: discover and invoke all six tools.
-- Normal browser: complete the full human path.
-- Verify Synergy Lens render acknowledgement before `explain_synergy_match` resolves.
-- Verify 360×800, 768×1024, and 1440×900 on the deployed build.
-- Verify no app-origin console errors or failed requests.
-- Re-run desktop and mobile Lighthouse plus agentic browsing audits on the deployed build.
-- Verify TLS, HTTP 200, security headers, public source, license detection, and live source revision.
+- Public source tag: `submission-2026-09-03-people-first-v3`.
+- Deployed source: `a1a61c787e797bbe6497ad9b17a34d053548ae99`.
+- Live URL: [https://webmcp.cohabby.com](https://webmcp.cohabby.com).
+- Public fallback alias: [https://cohabby-webmcp-challenge-weld.vercel.app](https://cohabby-webmcp-challenge-weld.vercel.app).
+- Public repository: [PlanetEmerson/cohabby-webmcp-challenge](https://github.com/PlanetEmerson/cohabby-webmcp-challenge).
+- GitHub reports a public repository, `main` as the default branch, and MIT as the detected license.
+- A fresh shallow clone of the public tag passed `npm ci`, all 89 tests, type-check, lint, the exact-SHA production build, the full dependency audit, and diff and status checks.
+- The custom domain returns HTTP 200 over TLS with a certificate for `webmcp.cohabby.com`.
+- The live response includes the required CSP, WebMCP permissions policy, HSTS, origin isolation, referrer policy, content-type protection, and frame denial.
+- The live footer shows `Source a1a61c787e79`.
+- The in-app judge browser discovered all six exact tools with the V3 schemas.
+- The in-app browser completed the full six-tool path twice from reset. Every mutating call returned only after its matching stage was visible.
+- A third in-app pass moved from results straight to comparison without calling the optional explanation tool, then completed the introduction.
+- The live `explain_synergy_match` call rendered Maya’s Synthetic Synergy Lens and three bounded reasons before resolving.
+- Both human-only actions remained visible page clicks. Every pass ended with `Demo confirmed. No real message was sent.`
+- The in-app browser reported zero warnings or errors after the three passes.
+- Chrome 151 completed the deployed unsupported-browser human path through the same receipt with zero warnings or errors.
+- Deployed screenshots cover 360×800, 768×1024, and 1440×900.
+- Deployed desktop Lighthouse scores 100 for performance, accessibility, best practices, and SEO. It measures 0.5 s LCP, 0 ms TBT, and 0.001 CLS.
+- Deployed mobile Lighthouse scores 99 for performance and 100 for accessibility, best practices, and SEO. It measures 2.3 s LCP, 10 ms TBT, and 0.007 CLS.
+- Vercel reports the production deployment ready and the deployment error log is empty.
 
-This file records completed local proof separately from pending deployment proof. It must not claim a final live result until that exact public revision passes.
+## Remaining human and runtime gates
+
+- Chrome 151 does not expose `document.modelContext` in the connected profile. CJ must enable Chrome’s WebMCP testing flag before the Chrome-specific six-tool pass.
+- Run one model-specific GPT-5.6 Terra six-tool pass. GPT-5.6 Luna remains out of scope.
+- Record CJ’s final narration, add accurate captions, and upload the under-three-minute video publicly to YouTube.
+- Add the YouTube URL and selected screenshots to Devpost.
+- Stop before final Devpost submission and obtain CJ’s explicit approval.
