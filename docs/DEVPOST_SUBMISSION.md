@@ -6,38 +6,48 @@ CoHabby Living Decision Room
 
 ## Tagline
 
-Find a room with your browser agent on one shared, human-controlled page.
+Meet a compatible roommate with your browser agent on one shared, human-controlled page.
 
 ## Short description
 
-Finding a room means choosing a home, shared rules, and another human relationship. I built Living Decision Room so a person and their browser agent can work through that choice on the same page. The Living Matchboard turns the work into a brief, a hand of room cards, a decision line, and one editable note. The person applies the brief and confirms the introduction.
+CoHabby helps people look for roommates who may live well together. I built Living Decision Room so a person and their browser agent can work through that choice on the same page. The agent can understand a living style, stage must-haves, bring forward fictional people and homes, explain a fixed synthetic Synergy read, compare daily life, and prepare a practical first hello. The person approves the living plan and confirms the introduction.
 
 ## Why is this a strong fit for WebMCP?
 
-Housing search breaks when an agent has to guess at page structure, hidden state, or confirmation boundaries. WebMCP lets the page expose five narrow operations through its real state machine. The person and agent see the same brief, results, comparison, and draft. There is no second model behind the page and no external MCP server.
+Roommate search is hard for a browser agent when the real decision is spread across filters, cards, hidden state, and confirmation screens. WebMCP lets the page expose six narrow operations through the same state machine used by the human interface.
+
+The agent does not call another agent. It uses CoHabby’s page directly. Each tool has one clear job, bounded input, current-state checks, and a visible result. The signature tool, `explain_synergy_match`, opens a clear explanation for one current fictional roommate possibility without exposing or calculating CoHabby’s private production score.
 
 ## How does it create a better user experience?
 
-The person can describe a housing goal in normal language instead of rebuilding it across filters and tabs. Every agent change moves the same visible Matchboard. The brief can be corrected before it affects results. Room reasons come from the app's practical rules, and the final introduction remains editable and unsent until the person confirms the demo.
+The first screen gives the person one obvious next step. After that, the action stays in the same place. The page shows one stage at a time, so people do not have to search through a stack of old panels.
 
-The full interface also works without WebMCP, so the site remains a useful web page in any modern browser.
+The search puts possible roommates first and keeps the home as practical context. A person can see the portrait, household rhythm, synthetic Synergy read, rent, timing, and reason labels together. The Synergy Lens explains the read before comparison. The comparison makes the person and tone choice explicit before the note appears.
+
+The full flow works without WebMCP, so an unsupported browser still gets the complete product path.
 
 ## What can people and agents do together now?
 
-An agent can turn a request into a reviewable living brief, ask CoHabby for current synthetic options, and build a comparison without losing the meaning of the search. The person keeps control at the two moments that matter: approving the brief and confirming the introduction.
+A browser agent can turn a housing request into a visible living plan, find current fictional roommate possibilities, explain one synthetic Synergy read, compare two or three people and homes, and prepare a roommate introduction.
 
-That shared handoff was hard to express with browser clicking alone. WebMCP gives each operation a clear contract and lets the page show the result.
+The person keeps the two decisions that should not be automated. They approve the living plan and confirm the introduction. No tool can send a message, contact a real person, touch a real listing, or write to production.
+
+This creates a clean handoff. The browser handles structured work. The person controls intent and contact.
 
 ## How did I implement WebMCP?
 
-The top-level page registers five imperative tools with `document.modelContext.registerTool`. Each tool has a bounded object schema with `additionalProperties: false`. The callbacks revalidate inputs against CSP-safe standalone Ajv validators, call the same typed store actions as the human UI, wait for React to render the new state, and return a narrow safe projection.
+The top-level page statically registers six imperative tools with `document.modelContext.registerTool`. Each input uses a bounded object schema with `additionalProperties: false`. The callbacks reject non-plain values, revalidate with standalone Ajv code that works under the production CSP, enforce the current state and visible result generation, and return an exact safe projection.
 
-Registration and data work use abort signals. Room references are valid only for the current result generation. Outputs exclude exact locations, contact details, private IDs, URLs, and agent instructions. The app uses twelve owned synthetic room records and makes no network or production write. It has no embedded model, microphone access, or voice agent.
+Mutating tools combine the invocation and workspace-reset signals. They wait for React to render the new state before resolving. If cancellation lands during render acknowledgement, the store restores the previous logical state and keeps `stateVersion` monotonic.
+
+Only `get_living_context` is marked read-only. Fixture-derived results are marked untrusted. Outputs exclude image paths, URLs, exact locations, contact details, production identifiers, internal rank, and agent instructions.
+
+The app uses twelve fictional people, twelve fictional homes, and fixed synthetic scores. It makes no backend or model call.
 
 ## What is new for the challenge?
 
-CoHabby existed before the challenge. Living Decision Room, its five WebMCP tools, browser lifecycle adapter, synthetic room data, comparison board, human confirmation flow, public tests, live deployment, and this public repository were created during the submission period. `CHALLENGE_WORK.md` links that work to the dated commit history.
+CoHabby existed before the challenge. Living Decision Room, its six WebMCP tools, public state machine, synthetic fixtures, original generated assets, Synergy Lens, comparison, human controls, tests, public repository, and standalone deployment were built during the submission period. `CHALLENGE_WORK.md` separates that work from the private product.
 
 ## Technology
 
-WebMCP, Next.js, React, TypeScript, Ajv, Vitest, Tailwind CSS, Motion, and Lucide.
+WebMCP, Next.js, React, TypeScript, Ajv, Vitest, Tailwind CSS, Motion, Paper Shaders, Lucide, and WebP.

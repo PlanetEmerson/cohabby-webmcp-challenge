@@ -2,41 +2,52 @@
 
 ## What existed before August 25, 2026
 
-CoHabby already existed as a private housing product with its own mobile and web applications, brand, marketplace ideas, and compatibility research. None of that private Git history, member data, production configuration, backend code, or authenticated product state is included here.
+CoHabby already existed as a private roommate and housing product with mobile and web apps, a brand, compatibility research, and a private production Synergy system.
 
-The warm Craft Era colors and the CoHabby name predate the challenge. They are used here with the owner's permission.
+This repository does not contain that private Git history, production scoring code, member data, real listings, backend code, authentication state, or production configuration.
 
-## What is new
+The CoHabby name, app icon, Outfit-led typography, warm canvas, coral, teal, and Craft Era visual direction predate the challenge. The founder authorized their use in this public demo.
 
-This repository started during the WebMCP Challenge submission period with the root scaffold commit `7df5d15`.
+## What is new for the challenge
 
-The following work is new for the challenge:
+This repository began during the WebMCP Challenge submission period with root scaffold commit `7df5d15`.
 
-- The standalone Living Decision Room page.
-- The five imperative WebMCP tools.
+The following work was built for the challenge:
+
+- The standalone CoHabby Living Decision Room page.
+- Six imperative top-level WebMCP tools.
 - Strict input schemas and CSP-safe standalone Ajv validation.
-- The typed tab-local state machine and render acknowledgement boundary.
-- Twelve synthetic room fixtures across three demo markets.
-- Safe reason projections and deterministic introduction templates.
-- Human-only brief application and demo introduction confirmation.
-- Unsupported-browser, mobile, tablet, and desktop experiences.
-- Registration cleanup, cancellation, stale-reference checks, and security headers.
-- The Living Matchboard redesign with a five-step activity rail, SVG room cards, one causal doorway ribbon, and reduced-motion behavior.
-- A separate visible activity store that records browser-agent and human actions without changing the seven-phase product state machine.
-- Public tests, setup instructions, provenance notes, demo script, and submission copy.
-
-The challenge commit range begins at `7df5d15`. The immutable `submission-2026-09-03` tag preserves the first complete version, and `submission-2026-09-03-final` preserves the first Matchboard redesign. The accessibility and performance-audited judged revision is marked by `submission-2026-09-03-polished`, and the live footer shows its exact deployed SHA.
+- Exact output schemas plus a second safe-output projection.
+- An eight-phase tab-local state machine with monotonic versions.
+- Render acknowledgement, combined invocation and reset cancellation, transactional rollback, stale-execution checks, and static registration cleanup.
+- Twelve fictional roommates and twelve fictional homes across New York, Amsterdam, and Chicago.
+- Fixed synthetic Synergy reads, bounded reason codes, and a visible disclosure that no production score is calculated.
+- Twenty-four original generated images with stripped metadata and committed provenance.
+- Human-only living-plan approval, introduction editing, confirmation, and reset.
+- The centered six-step WebMCP ribbon and one-stage people-first interface.
+- The Synthetic Synergy Lens, person-first comparison, practical tone choice, roommate note, and non-romantic completion state.
+- Responsive, reduced-motion, save-data, WebGL fallback, unsupported-browser, and keyboard paths.
+- Public tests, security headers, setup instructions, asset prompts, demo script, Devpost draft, and evidence map.
 
 ## Public tools
 
 1. `get_living_context`
 2. `stage_living_brief`
 3. `find_compatible_rooms`
-4. `compare_shortlist`
-5. `prepare_introduction`
+4. `explain_synergy_match`
+5. `compare_shortlist`
+6. `prepare_introduction`
 
-No tool applies a brief, confirms an introduction, sends a message, publishes a listing, makes a payment, or writes to production.
+The fixed tool names preserve compatibility with the earlier challenge build. No tool applies the living plan, confirms an introduction, sends a message, publishes a listing, makes a payment, resets the page, or writes to production.
+
+## Synthetic Synergy boundary
+
+The V3 scores and evidence values are hand-authored fixture data. They do not run, copy, approximate, or reveal CoHabby’s private production model. The demo uses the score only after hard practical housing boundaries.
+
+Portrait appearance is decorative. It never enters filtering, ordering, a tool input, or a tool output.
 
 ## Deliberate omissions
 
-This challenge build does not include production search, member profiles, real listings, Synergy scoring, authentication, payments, invitations, messaging, voice, external MCP, a model API, or an AI-platform submission.
+This challenge build includes no production search, real members, real listings, authentication, payments, invitations, messaging, voice, external MCP, model API, Firebase, Algolia, Stripe, RevenueCat, Cloud Run, or AI-platform submission.
+
+The live footer and immutable V3 tag bind the final judged deployment to this public source after the clean-clone release gate.

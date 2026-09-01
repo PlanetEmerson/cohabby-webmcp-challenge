@@ -1,39 +1,36 @@
-# Living Matchboard verification
+# People-First Synergy V3 verification
 
 Date: September 1, 2026
 
-## Automated gate
+## Local automated gate
 
-- Node 22 clean install completed from `package-lock.json`.
-- 61 tests passed across contracts, state transitions, activity, UI, safety, registration, headers, motion policy, voice exclusion, and computed WCAG contrast pairs.
-- TypeScript type-check passed.
-- ESLint passed with zero warnings.
-- The optimized Next.js production build completed.
-- The production-only dependency audit found zero vulnerabilities.
+- Node 22 install is locked by `package-lock.json`.
+- 88 tests pass across schemas, exact outputs, state transitions, deterministic ordering, asset maps, cancellation rollback, reset invalidation, registration, UI, safety, security headers, reduced motion, and computed contrast.
+- TypeScript passes with no errors.
+- ESLint passes with zero warnings.
+- The optimized Next.js production build completes.
+- The V3 security diff scan reviewed all 26 changed source files and produced no reportable finding. It reproduced two lifecycle specification gaps, which were fixed with focused tests before release.
 
-## Browser evidence
+## Local browser gate
 
-- The production build exposed the five exact WebMCP tools in the in-app judge browser.
-- The five-tool path completed twice from a fresh page.
-- Both passes paused for the visible human brief approval and introduction confirmation.
-- The final receipt read `Demo confirmed. No real message was sent.`
-- The browser console contained no warnings or errors after the complete path.
-- The connected Chrome instance did not expose WebMCP and showed the documented unsupported-browser state. Its complete human path reached the same receipt with no console warnings or errors.
-- Visual checks covered 360×800, 768×1024, and 1440×900.
+- The unsupported-browser path completes from living plan through the exact receipt.
+- Desktop screenshots cover ready, plan review, people and homes, Synergy explanation, comparison, introduction, and success at 1440×900.
+- Mobile screenshots cover the clear next action and person-first match stage at 360×800.
+- The action dock remains visible, the whole people-and-home card is selectable, and the supporting Synergy action does not toggle selection.
+- The comparison shows the person and practical tone choice before the note action.
+- The success art uses two roommate paths meeting at a home. It has no romantic symbol or dating language.
 
-## Performance and presentation evidence
+## Release proof still required on the final public SHA
 
-- Desktop Lighthouse scored 100 for performance, accessibility, best practices, and SEO. It measured 0.5 s LCP, 0 ms total blocking time, and 0.003 CLS.
-- Mobile Lighthouse scored 99 for performance and 100 for accessibility, best practices, and SEO. It measured 2.2 s LCP, 0 ms total blocking time, and 0 CLS under Lighthouse throttling.
-- Chrome's agentic browsing audit scored 100 on desktop and mobile.
-- A Chrome trace with 4× CPU slowdown and Slow 4G measured 695 ms LCP and 0 CLS.
-- The HyperFrames demo animatic passed with zero lint, runtime, layout, motion, or contrast findings. All 16 sampled text treatments passed WCAG AA.
+- Fresh public-tag clone: install, 88-test suite, type-check, lint, production build, dependency audit, and diff check.
+- GPT-5.6 Sol: complete the six-tool path twice from reset.
+- GPT-5.6 Terra: complete the six-tool path once.
+- Chrome 149 or later with WebMCP testing enabled: discover and invoke all six tools.
+- Normal browser: complete the full human path.
+- Verify Synergy Lens render acknowledgement before `explain_synergy_match` resolves.
+- Verify 360×800, 768×1024, and 1440×900 on the deployed build.
+- Verify no app-origin console errors or failed requests.
+- Run desktop and mobile Lighthouse plus accessibility and agentic browsing audits.
+- Verify TLS, HTTP 200, security headers, public source, license detection, and live source revision.
 
-## Boundary evidence
-
-- The public source and history scans found no credentials, private checkout paths, production CoHabby hosts, OpenAI configuration, or private repository names.
-- The repository contains no photo, audio, video, font, source-map, or private brand-asset file.
-- Microphone access remains denied by `Permissions-Policy`.
-- The runtime source contains no speech recognition, WebRTC, microphone request, OpenAI client, or model endpoint.
-
-The final live revision and immutable tag are verified again after public deployment.
+This file records completed local proof separately from pending deployment proof. It must not claim a final live result until that exact public revision passes.
