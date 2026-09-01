@@ -2,14 +2,25 @@
 
 Date: September 1, 2026
 
-## V4 presentation candidate
+## V4 presentation release
 
 - The six WebMCP contracts, eight product phases, fixtures, and two human-only approvals remain unchanged.
 - The full local suite now contains 94 passing tests. TypeScript and ESLint pass with no errors or warnings.
 - Focused tests cover the larger person-first portraits, non-overlapping SVG Synergy gauge, solid comparison surface, stage text treatment, and lighter action gradient.
 - Local screenshots cover 360×800, 768×1024, 1296×1233, and 1440×900. The page has no horizontal overflow at 360 px.
 - The complete unsupported-browser path reaches the exact receipt with no app console error or failed app-origin request.
-- The live V3 deployment remains the rollback-safe baseline until the V4 clean-clone, production build, audit, and deployment checks pass.
+- A bounded security diff scan reviewed all ten changed production files and found no reportable issue. The tool schemas, safe-output boundary, state and cancellation controls, human-only actions, self-only resource policy, and headers were unchanged.
+- Desktop Lighthouse scores 100 for performance, accessibility, best practices, and SEO. It measures 0.53 s LCP, 0 ms TBT, and 0.0003 CLS.
+- Mobile Lighthouse scores 98 for performance and 100 for accessibility, best practices, and SEO. It measures 2.50 s LCP, 3.5 ms TBT, and 0.0074 CLS.
+- Public source tag: `submission-2026-09-03-people-first-v4`.
+- Deployed source: `3aa7869022cebbb370e3db5ef7e7d1f52fbccc11`.
+- A fresh public-tag clone under Node 22 passed all 94 tests, type-check, lint, the exact-SHA production build, the production dependency audit, diff check, and clean status.
+- Vercel reports the production deployment ready. The custom domain and stable fallback alias return HTTP 200, and the error and warning logs are empty.
+- The custom domain exposes the required production headers and the live footer shows `Source 3aa7869022ce`.
+- The in-app judge browser discovered all six exact WebMCP tools with the unchanged strict schemas.
+- The live six-tool path completed through the visible Synergy explanation and exact human-confirmed receipt. A second pass skipped the optional explanation and completed successfully.
+- The in-app browser console reported no warning or error after both passes.
+- The immutable V3 tag remains unchanged as the rollback-safe baseline.
 
 ## V3 baseline release proof
 
