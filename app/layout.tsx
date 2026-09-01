@@ -12,7 +12,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL('https://webmcp.cohabby.com'),
   title: 'CoHabby Living Decision Room',
-  description: 'Build a living brief, compare synthetic rooms, and prepare a human-approved introduction with your browser agent.',
+  description: 'Turn a living brief into room cards, a decision line, and a human-approved introduction with your browser agent.',
   applicationName: 'CoHabby Living Decision Room',
   robots: { index: true, follow: true },
   other: { 'theme-color': '#FBF5F1' },

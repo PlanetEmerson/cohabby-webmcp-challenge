@@ -2,7 +2,7 @@
 
 ## Challenge boundary
 
-Living Decision Room is a synthetic browser demo. It has no backend, authentication, production API, model API, analytics, cookies, or persistent storage.
+Living Decision Room is a synthetic browser demo. It has no backend, authentication, production API, model API, microphone access, speech recognition, WebRTC, analytics, cookies, or persistent storage.
 
 Do not submit real personal information. The app does not need it.
 
@@ -15,6 +15,7 @@ Do not submit real personal information. The app does not need it.
 - Outputs pass a separate size, depth, key, URL, and agent-instruction safety check.
 - Registration and in-flight work support abort signals.
 - Brief application and introduction confirmation exist only as visible human controls.
+- The deployment denies microphone access and does not connect to OpenAI or any CoHabby production origin.
 
 ## Data
 

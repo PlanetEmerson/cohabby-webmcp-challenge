@@ -4,21 +4,48 @@ import {
   Check,
   CircleAlert,
   GitCompareArrows,
-  House,
-  MapPin,
   RefreshCw,
   Search,
   ShieldCheck,
   SlidersHorizontal,
-  Sparkles,
 } from 'lucide-react';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import {
+  AnimatePresence,
+  domAnimation,
+  LazyMotion,
+  LayoutGroup,
+  m,
+  MotionConfig,
+} from 'motion/react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 
+import { AgentActivityRail } from '@/components/decision-room/agent-activity-rail';
+import {
+  BrandDoorwayMark,
+  ComparisonStage,
+  EmptyRoomSlots,
+  LivingBriefTray,
+  RoomCard,
+  SampleLivingTokens,
+  label,
+} from '@/components/decision-room/matchboard-parts';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
+import {
+  createDecisionRoomActivityStore,
+  type DecisionRoomActivityAction,
+  type DecisionRoomActivityStore,
+} from '@/lib/decision-room/activity-store';
 import { createDecisionRoomStore, DecisionRoomError, type DecisionRoomStore } from '@/lib/decision-room/store';
 import type { DecisionRoomState, SafeRoomSummary } from '@/lib/decision-room/types';
+import { visualStageForPhase } from '@/lib/decision-room/visual-stage';
 import { getWebMcpRegistrationCoordinator } from '@/lib/webmcp/registration';
 import { parseToolInput } from '@/lib/webmcp/tool-contracts';
 import { createWebMcpTools } from '@/lib/webmcp/tools';
@@ -35,162 +62,34 @@ const sampleBrief = {
   quietTime: 'early_evenings',
 } as const;
 
-const samplePrompt = 'Help me find a quiet room in New York under $1,900 a month. I want to move within 30 days, I do not smoke, and I have a cat. Compare the strongest options and prepare a warm introduction to the best one.';
+const stageProgress = {
+  ready: 0.08,
+  brief: 0.28,
+  rooms: 0.52,
+  comparison: 0.75,
+  introduction: 0.92,
+  confirmed: 1,
+} as const;
 
-const optionLabels: Record<string, string> = {
-  now: 'Now',
-  within_30_days: 'Within 30 days',
-  within_60_days: 'Within 60 days',
-  flexible: 'Flexible',
-  room_in_shared_home: 'Room in a shared home',
-  entire_place: 'Entire place',
-  either: 'Either',
-  none: 'None',
-  cat: 'Cat',
-  dog: 'Dog',
-  other: 'Other',
-  no_smoking: 'No smoking',
-  outdoor_only: 'Outdoor only',
-  early_evenings: 'Early evenings',
-  late_evenings: 'Late evenings',
-  strong: 'Strong',
-  good: 'Good',
-  possible: 'Possible',
-};
-
-function label(value: unknown): string {
-  if (value === undefined || value === null || value === '') return 'Not set';
-  if (typeof value === 'number') return String(value);
-  return optionLabels[String(value)] ?? String(value);
+function activityErrorCode(error: unknown) {
+  return error instanceof DecisionRoomError ? error.code : 'internal_error' as const;
 }
 
-function money(room: SafeRoomSummary): string {
-  return new Intl.NumberFormat('en', {
-    style: 'currency',
-    currency: room.currency,
-    maximumFractionDigits: 0,
-  }).format(room.monthlyPrice);
-}
-
-function BriefSummary({ state }: { state: DecisionRoomState }) {
-  const brief = state.appliedBrief;
-  if (!brief) {
-    return (
-      <div className="grid min-h-52 place-items-center px-6 py-8 text-center">
-        <div>
-          <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-primary-surface text-2xl" aria-hidden="true">🏠</div>
-          <p className="mt-4 font-display text-h4 text-text-primary">Your brief will appear here</p>
-          <p className="mt-2 max-w-xs text-body-md text-text-secondary">Load the sample or ask your browser agent to stage one.</p>
-        </div>
-      </div>
-    );
-  }
-  const entries = [
-    ['Market', brief.market],
-    ['Budget', brief.maxMonthlyBudget ? `${brief.currency ?? ''} ${brief.maxMonthlyBudget.toLocaleString()}`.trim() : undefined],
-    ['Move', brief.moveWindow],
-    ['Home', brief.homeType],
-    ['Pets', brief.pets],
-    ['Smoking', brief.smoking],
-    ['Quiet time', brief.quietTime],
-  ] as const;
-  return (
-    <div className="space-y-4 px-6 py-5">
-      <div className="flex items-center gap-2 text-success-dark">
-        <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-        <p className="font-display text-sm font-semibold">Brief approved by you</p>
-      </div>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-        {entries.map(([name, value]) => (
-          <div key={name} className="flex flex-col gap-0.5">
-            <span className="text-body-sm text-text-tertiary">{name}</span>
-            <span className="text-body-md font-medium text-text-primary">{label(value)}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function BriefProposal({ store, state }: { store: DecisionRoomStore; state: DecisionRoomState }) {
-  const proposal = state.stagedBrief;
-  if (!proposal) return null;
-  let valid = true;
+function runHumanMutation<T extends { stateVersion: number }>(
+  activity: DecisionRoomActivityStore,
+  action: DecisionRoomActivityAction,
+  operation: () => T,
+  targets: (result: T) => ReadonlyArray<string> = () => [],
+): T {
+  const token = activity.begin('human', action);
   try {
-    parseToolInput('stage_living_brief', proposal.values);
-  } catch {
-    valid = false;
+    const result = operation();
+    activity.complete(token, { stateVersion: result.stateVersion, targetRefs: targets(result) });
+    return result;
+  } catch (error) {
+    activity.fail(token, activityErrorCode(error), 0);
+    throw error;
   }
-  const update = (value: Record<string, unknown>) => {
-    try {
-      store.updateStagedBrief(value);
-    } catch {
-      // The inline validity state explains what must be corrected.
-    }
-  };
-  return (
-    <Card
-      role="region"
-      aria-label="Review living brief"
-      className="overflow-hidden border-t-[3px] border-t-primary shadow-elevated"
-    >
-      <div className="flex items-start gap-3 border-b border-neutral-100 bg-primary-surface px-5 py-4 sm:px-6">
-        <SlidersHorizontal className="mt-0.5 h-5 w-5 shrink-0 text-primary-ink" aria-hidden="true" />
-        <div>
-          <h2 className="font-display text-h4 text-text-primary">Review living brief</h2>
-          <p className="mt-1 text-body-md text-text-secondary">The agent staged this. Nothing changes until you use it.</p>
-        </div>
-      </div>
-      <div className="grid gap-4 px-5 py-5 sm:grid-cols-2 sm:px-6">
-        <label className="space-y-1.5 text-body-sm font-medium text-text-secondary">
-          Market
-          <input
-            value={proposal.values.market ?? ''}
-            maxLength={80}
-            onChange={(event) => update({ market: event.target.value })}
-            className="min-h-11 w-full rounded-lg border-neutral-300 text-body-md text-text-primary focus:border-info focus:ring-info"
-          />
-        </label>
-        <label className="space-y-1.5 text-body-sm font-medium text-text-secondary">
-          Monthly budget
-          <input
-            type="number"
-            min={100}
-            max={50000}
-            value={proposal.values.maxMonthlyBudget ?? ''}
-            onChange={(event) => {
-              const value = Number(event.target.value);
-              if (Number.isInteger(value)) update({ maxMonthlyBudget: value });
-            }}
-            className="min-h-11 w-full rounded-lg border-neutral-300 text-body-md text-text-primary focus:border-info focus:ring-info"
-          />
-        </label>
-        <label className="space-y-1.5 text-body-sm font-medium text-text-secondary">
-          Currency
-          <input
-            value={proposal.values.currency ?? ''}
-            maxLength={3}
-            onChange={(event) => update({ currency: event.target.value.toUpperCase() })}
-            className="min-h-11 w-full rounded-lg border-neutral-300 text-body-md uppercase text-text-primary focus:border-info focus:ring-info"
-          />
-        </label>
-        <BriefSelect labelText="Move window" value={proposal.values.moveWindow} onChange={(value) => update({ moveWindow: value })} options={['now', 'within_30_days', 'within_60_days', 'flexible']} />
-        <BriefSelect labelText="Home type" value={proposal.values.homeType} onChange={(value) => update({ homeType: value })} options={['room_in_shared_home', 'entire_place', 'either']} />
-        <BriefSelect labelText="Pets" value={proposal.values.pets} onChange={(value) => update({ pets: value })} options={['none', 'cat', 'dog', 'other', 'flexible']} />
-        <BriefSelect labelText="Smoking" value={proposal.values.smoking} onChange={(value) => update({ smoking: value })} options={['no_smoking', 'outdoor_only', 'flexible']} />
-        <BriefSelect labelText="Quiet time" value={proposal.values.quietTime} onChange={(value) => update({ quietTime: value })} options={['early_evenings', 'late_evenings', 'flexible']} />
-      </div>
-      {!valid ? (
-        <p role="status" className="mx-5 mb-3 rounded-lg bg-warning-surface px-3 py-2 text-body-sm text-warning-dark sm:mx-6">
-          Use practical living fields with the supported values shown here.
-        </p>
-      ) : null}
-      <div className="flex flex-wrap justify-end gap-2 border-t border-neutral-100 px-5 py-4 sm:px-6">
-        <Button variant="ghost" onClick={() => store.discardStagedBrief()}>Discard proposal</Button>
-        <Button disabled={!valid} onClick={() => store.applyBriefByHuman(proposal.proposalRef)}>Use this brief</Button>
-      </div>
-    </Card>
-  );
 }
 
 function BriefSelect({
@@ -210,7 +109,7 @@ function BriefSelect({
       <select
         value={value ?? ''}
         onChange={(event) => onChange(event.target.value)}
-        className="min-h-11 w-full rounded-lg border-neutral-300 text-body-md text-text-primary focus:border-info focus:ring-info"
+        className="min-h-11 w-full rounded-lg border-neutral-300 bg-white text-body-md text-text-primary focus:border-info focus:ring-info"
       >
         <option value="">Not set</option>
         {options.map((option) => <option key={option} value={option}>{label(option)}</option>)}
@@ -219,64 +118,167 @@ function BriefSelect({
   );
 }
 
-function RoomCard({
-  room,
-  checked,
-  disabled,
-  onToggle,
+function BriefProposal({
+  store,
+  state,
+  activity,
 }: {
-  room: SafeRoomSummary;
-  checked: boolean;
-  disabled: boolean;
-  onToggle: () => void;
+  store: DecisionRoomStore;
+  state: DecisionRoomState;
+  activity: DecisionRoomActivityStore;
 }) {
-  const bandColor = room.fitBand === 'strong' ? 'success' : room.fitBand === 'good' ? 'info' : 'accent';
+  const proposal = state.stagedBrief;
+  if (!proposal) return null;
+  let valid = true;
+  try {
+    parseToolInput('stage_living_brief', proposal.values);
+  } catch {
+    valid = false;
+  }
+  const update = (value: Record<string, unknown>) => {
+    try {
+      runHumanMutation(activity, 'edit_brief', () => store.updateStagedBrief(value));
+    } catch {
+      // The visible validity state explains what must be corrected.
+    }
+  };
   return (
-    <article className={cn(
-      'rounded-2xl border border-neutral-200 bg-white p-5 shadow-card transition duration-causal',
-      checked && 'border-info ring-2 ring-info/20',
-    )}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <Chip color={bandColor}>{room.fitBand === 'strong' ? 'Strong fit' : room.fitBand === 'good' ? 'Good fit' : 'Possible fit'}</Chip>
-          <h3 className="mt-3 font-display text-h3 text-text-primary">{room.headline}</h3>
-          <p className="mt-1 flex items-center gap-1.5 text-body-md text-text-secondary">
-            <MapPin className="h-4 w-4 text-info-dark" aria-hidden="true" /> {room.marketLabel}
-          </p>
+    <m.section
+      layout
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      role="region"
+      aria-label="Review living brief"
+      data-human-action="brief-review"
+      className="mt-4 overflow-hidden rounded-[1.35rem] border border-primary/30 bg-neutral-0 shadow-elevated"
+    >
+      <div className="flex items-start justify-between gap-4 border-b border-primary/15 bg-primary-surface px-4 py-3 sm:px-5">
+        <div className="flex items-start gap-3">
+          <SlidersHorizontal className="mt-0.5 h-5 w-5 shrink-0 text-primary-ink" aria-hidden="true" />
+          <div>
+            <p className="text-body-sm font-semibold uppercase tracking-[0.12em] text-primary-ink">Your move</p>
+            <h2 className="font-display text-h4 font-semibold text-text-primary">Does this look right?</h2>
+          </div>
         </div>
-        <label className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full border border-neutral-200 bg-neutral-0 hover:bg-info-surface">
-          <span className="sr-only">Compare {room.headline}</span>
-          <input
-            type="checkbox"
-            checked={checked}
-            disabled={disabled && !checked}
-            onChange={onToggle}
-            className="h-5 w-5 rounded border-neutral-300 text-info focus:ring-info"
+        <Chip color="primary">Not applied</Chip>
+      </div>
+      <div className="grid gap-3 px-4 py-4 sm:grid-cols-2 sm:px-5 lg:grid-cols-4">
+        <label className="space-y-1.5 text-body-sm font-medium text-text-secondary">
+          Market
+          <input value={proposal.values.market ?? ''} maxLength={80} onChange={(event) => update({ market: event.target.value })} className="min-h-11 w-full rounded-lg border-neutral-300 bg-white text-body-md text-text-primary focus:border-info focus:ring-info" />
+        </label>
+        <label className="space-y-1.5 text-body-sm font-medium text-text-secondary">
+          Monthly budget
+          <input type="number" min={100} max={50000} value={proposal.values.maxMonthlyBudget ?? ''} onChange={(event) => {
+            const value = Number(event.target.value);
+            if (Number.isInteger(value)) update({ maxMonthlyBudget: value });
+          }} className="min-h-11 w-full rounded-lg border-neutral-300 bg-white text-body-md text-text-primary focus:border-info focus:ring-info" />
+        </label>
+        <label className="space-y-1.5 text-body-sm font-medium text-text-secondary">
+          Currency
+          <input value={proposal.values.currency ?? ''} maxLength={3} onChange={(event) => update({ currency: event.target.value.toUpperCase() })} className="min-h-11 w-full rounded-lg border-neutral-300 bg-white text-body-md uppercase text-text-primary focus:border-info focus:ring-info" />
+        </label>
+        <BriefSelect labelText="Move" value={proposal.values.moveWindow} onChange={(value) => update({ moveWindow: value })} options={['now', 'within_30_days', 'within_60_days', 'flexible']} />
+        <BriefSelect labelText="Home" value={proposal.values.homeType} onChange={(value) => update({ homeType: value })} options={['room_in_shared_home', 'entire_place', 'either']} />
+        <BriefSelect labelText="Pets" value={proposal.values.pets} onChange={(value) => update({ pets: value })} options={['none', 'cat', 'dog', 'other', 'flexible']} />
+        <BriefSelect labelText="Smoking" value={proposal.values.smoking} onChange={(value) => update({ smoking: value })} options={['no_smoking', 'outdoor_only', 'flexible']} />
+        <BriefSelect labelText="Quiet time" value={proposal.values.quietTime} onChange={(value) => update({ quietTime: value })} options={['early_evenings', 'late_evenings', 'flexible']} />
+      </div>
+      {!valid ? <p role="status" className="mx-4 mb-3 rounded-lg bg-warning-surface px-3 py-2 text-body-sm text-warning-dark sm:mx-5">Use the practical living options shown here.</p> : null}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-neutral-100 px-4 py-3 sm:px-5">
+        <p className="text-body-sm text-text-secondary">Nothing changes until you approve it.</p>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="ghost" onClick={() => runHumanMutation(activity, 'discard_brief', () => store.discardStagedBrief())}>Discard</Button>
+          <Button disabled={!valid} onClick={() => runHumanMutation(activity, 'apply_brief', () => store.applyBriefByHuman(proposal.proposalRef))}>Use this brief</Button>
+        </div>
+      </div>
+    </m.section>
+  );
+}
+
+function SiteToolsBadge({ status }: { status: 'checking' | 'ready' | 'unsupported' | 'error' }) {
+  return (
+    <div className={cn(
+      'inline-flex min-h-11 items-center gap-2 rounded-full border px-3 text-body-sm font-semibold',
+      status === 'ready' ? 'border-success/30 bg-success-surface text-success-dark' :
+        status === 'error' ? 'border-error/30 bg-error-surface text-error-dark' : 'border-neutral-200 bg-white text-text-secondary',
+    )} role="status" aria-label="Site tools status">
+      <span className={cn('h-2 w-2 rounded-full', status === 'ready' ? 'bg-success' : status === 'error' ? 'bg-error' : 'bg-neutral-400')} aria-hidden="true" />
+      {status === 'ready' ? 'Site tools ready' : status === 'checking' ? 'Checking site tools' : status === 'error' ? 'Site tools could not register' : 'Site tools unavailable'}
+    </div>
+  );
+}
+
+function IntroductionPanel({
+  store,
+  state,
+  activity,
+}: {
+  store: DecisionRoomStore;
+  state: DecisionRoomState;
+  activity: DecisionRoomActivityStore;
+}) {
+  if (!state.introduction) return null;
+  return (
+    <m.section
+      layout
+      initial={{ opacity: 0, x: 24 }}
+      animate={{ opacity: 1, x: 0 }}
+      role="region"
+      aria-label="Introduction note"
+      data-human-action="introduction-confirmation"
+      className="overflow-hidden rounded-[1.35rem] border border-success/30 bg-neutral-0 shadow-elevated"
+    >
+      <div className="flex items-start gap-3 border-b border-success/20 bg-success-surface px-4 py-3">
+        <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-success-dark" aria-hidden="true" />
+        <div>
+          <p className="text-body-sm font-semibold uppercase tracking-[0.12em] text-success-dark">Your move</p>
+          <h2 className="font-display text-h4 font-semibold text-text-primary">Check the note before anything happens.</h2>
+        </div>
+      </div>
+      <div className="p-4">
+        <label className="block space-y-2 text-body-sm font-medium text-text-secondary">
+          Introduction draft
+          <textarea
+            aria-label="Introduction draft"
+            value={state.introduction.draft}
+            maxLength={600}
+            rows={7}
+            onChange={(event) => runHumanMutation(activity, 'edit_introduction', () => store.updateIntroductionDraft(event.target.value))}
+            className="w-full resize-y rounded-xl border-neutral-300 bg-white text-body-md leading-relaxed text-text-primary focus:border-info focus:ring-info"
           />
         </label>
+        {state.notice?.kind === 'safety' ? <p className="mt-3 flex items-start gap-2 rounded-lg bg-warning-surface px-3 py-2 text-body-sm text-warning-dark"><CircleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />{state.notice.message}</p> : null}
       </div>
-      <div className="mt-4 flex items-baseline justify-between gap-4 border-y border-neutral-100 py-3">
-        <span className="font-display text-h3 text-text-primary">{money(room)}</span>
-        <span className="text-body-sm text-text-tertiary">per month</span>
-      </div>
-      <div className="mt-4 flex flex-wrap gap-1.5">
-        {room.reasonLabels.slice(0, 4).map((reason) => <Chip key={reason} color="info">{reason}</Chip>)}
-      </div>
-    </article>
+      {state.phase === 'INTRODUCTION_STAGED' ? (
+        <div className="flex justify-end border-t border-neutral-100 px-4 py-3">
+          <Button disabled={!state.introduction.isSafeToConfirm} onClick={() => runHumanMutation(activity, 'confirm_introduction', () => store.confirmIntroductionByHuman())}>
+            <Check className="h-4 w-4" aria-hidden="true" /> Confirm demo introduction
+          </Button>
+        </div>
+      ) : null}
+      {state.receipt ? <div className="border-t border-success/20 bg-success-surface px-4 py-3 text-body-md font-semibold text-success-dark">{state.receipt.message}</div> : null}
+    </m.section>
   );
 }
 
 export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
   const storeRef = useRef<DecisionRoomStore | null>(null);
+  const activityRef = useRef<DecisionRoomActivityStore | null>(null);
   if (!storeRef.current) storeRef.current = createDecisionRoomStore();
+  if (!activityRef.current) activityRef.current = createDecisionRoomActivityStore();
   const store = storeRef.current;
+  const activity = activityRef.current;
   const state = useSyncExternalStore(store.subscribe, store.getState, store.getState);
+  const activitySnapshot = useSyncExternalStore(activity.subscribe, activity.getSnapshot, activity.getSnapshot);
   const [siteToolsStatus, setSiteToolsStatus] = useState<'checking' | 'ready' | 'unsupported' | 'error'>('checking');
   const [selectedRefs, setSelectedRefs] = useState<string[]>([]);
   const [introRoomRef, setIntroRoomRef] = useState('');
   const [introTone, setIntroTone] = useState<'warm' | 'direct' | 'casual'>('warm');
   const [busy, setBusy] = useState(false);
   const changedRegionRef = useRef<HTMLDivElement>(null);
+  const visualStage = visualStageForPhase(state.phase);
 
   useLayoutEffect(() => {
     store.acknowledgeRendered(state.stateVersion);
@@ -289,16 +291,14 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
       return undefined;
     }
     setSiteToolsStatus('checking');
-    const lease = getWebMcpRegistrationCoordinator(context).register(createWebMcpTools(store));
+    const lease = getWebMcpRegistrationCoordinator(context).register(createWebMcpTools(store, activity));
     let active = true;
-    lease.ready
-      .then(() => { if (active) setSiteToolsStatus('ready'); })
-      .catch(() => { if (active) setSiteToolsStatus('error'); });
+    lease.ready.then(() => { if (active) setSiteToolsStatus('ready'); }).catch(() => { if (active) setSiteToolsStatus('error'); });
     return () => {
       active = false;
       lease.dispose();
     };
-  }, [state.workspaceGeneration, store]);
+  }, [state.workspaceGeneration, activity, store]);
 
   useEffect(() => {
     setSelectedRefs([]);
@@ -322,10 +322,16 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
   };
 
   const findRooms = async () => {
+    const token = activity.begin('human', 'find_compatible_rooms');
     setBusy(true);
     try {
-      await store.findCompatibleRooms({ limit: 6, order: 'best_fit' }, new AbortController().signal);
+      const result = await store.findCompatibleRooms({ limit: 6, order: 'best_fit' }, new AbortController().signal);
+      activity.complete(token, {
+        stateVersion: result.stateVersion,
+        targetRefs: result.status === 'unsupported_market' ? [] : result.visibleRoomRefs,
+      });
     } catch (error) {
+      activity.fail(token, activityErrorCode(error), store.getState().stateVersion);
       if (!(error instanceof DecisionRoomError)) throw error;
     } finally {
       setBusy(false);
@@ -338,234 +344,132 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
       .map((roomRef) => state.results?.rooms.find((room) => room.roomRef === roomRef))
       .filter((room): room is SafeRoomSummary => Boolean(room));
   }, [state.comparison, state.results]);
+  const introductionRoom = state.introduction && state.results
+    ? state.results.rooms.find((room) => room.roomRef === state.introduction?.roomRef) ?? null
+    : null;
+
+  const reset = () => {
+    const result = store.resetByHuman();
+    activity.reset();
+    const token = activity.begin('human', 'reset');
+    activity.complete(token, { stateVersion: result.stateVersion });
+  };
 
   return (
-    <main className="min-h-screen bg-neutral-50 text-text-primary">
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-7 lg:py-9">
-        <header className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-text-primary">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-white" aria-hidden="true">C</span>
-            CoHabby
-          </div>
-          <div className="flex items-center gap-2">
-            <div className={cn(
-              'inline-flex min-h-11 items-center gap-2 rounded-full border px-3 text-body-sm font-medium',
-              siteToolsStatus === 'ready' ? 'border-success/30 bg-success-surface text-success-dark' :
-                siteToolsStatus === 'error' ? 'border-error/30 bg-error-surface text-error-dark' :
-                  'border-neutral-200 bg-white text-text-secondary',
-            )}>
-              <span className={cn('h-2 w-2 rounded-full', siteToolsStatus === 'ready' ? 'bg-success' : siteToolsStatus === 'error' ? 'bg-error' : 'bg-neutral-400')} aria-hidden="true" />
-              {siteToolsStatus === 'ready' ? 'Site tools ready' : siteToolsStatus === 'checking' ? 'Checking site tools' : siteToolsStatus === 'error' ? 'Site tools could not register' : 'Site tools unavailable'}
-            </div>
-            <Button variant="ghost" onClick={() => store.resetByHuman()} aria-label="Reset demo">
-              <RefreshCw className="h-4 w-4" aria-hidden="true" /> Reset demo
-            </Button>
-          </div>
-        </header>
-
-        {siteToolsStatus === 'unsupported' ? (
-          <p className="mt-4 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-body-sm text-text-secondary">
-            Site tools are not available here. You can still use the full demo on this page.
-          </p>
-        ) : null}
-
-        <section className="pb-8 pt-9 sm:pt-12">
-          <div className="max-w-3xl">
-            <p className="font-display text-sm font-semibold uppercase tracking-[0.16em] text-primary-ink">A shared housing decision space</p>
-            <h1 className="mt-3 font-display text-4xl font-bold tracking-[-0.03em] text-text-primary sm:text-5xl">Living Decision Room</h1>
-            <p className="mt-4 max-w-2xl text-body-lg leading-relaxed text-text-secondary">Tell your agent how you want to live. Review every change.</p>
-          </div>
-          <Card className="mt-7 max-w-3xl overflow-hidden border-t-[3px] border-t-gold">
-            <div className="flex items-start gap-3 bg-gold-surface px-5 py-4 sm:px-6">
-              <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-gold-dark" aria-hidden="true" />
-              <div className="min-w-0 flex-1">
-                <p className="font-display text-sm font-semibold text-text-primary">Sample prompt</p>
-                <p className="mt-1 text-body-md leading-relaxed text-text-secondary">{samplePrompt}</p>
-              </div>
-            </div>
-            {state.phase === 'READY' ? (
-              <div className="flex justify-end border-t border-neutral-100 px-5 py-3 sm:px-6">
-                <Button variant="outline" onClick={() => store.stageLivingBrief(sampleBrief)}>Load sample brief</Button>
-              </div>
-            ) : null}
-          </Card>
-        </section>
-
-        <div className="grid items-start gap-5 lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-6">
-          <Card className="overflow-hidden border-t-[3px] border-t-primary">
-            <div className="flex items-center gap-3 border-b border-neutral-100 bg-primary-surface px-6 py-4">
-              <SlidersHorizontal className="h-5 w-5 text-primary-ink" aria-hidden="true" />
-              <h2 className="font-display text-h4 text-text-primary">Living brief</h2>
-            </div>
-            <BriefSummary state={state} />
-            {state.phase === 'BRIEF_APPLIED_BY_HUMAN' ? (
-              <div className="border-t border-neutral-100 px-6 py-4">
-                <Button className="w-full" disabled={busy} onClick={() => void findRooms()}>
-                  <Search className="h-4 w-4" aria-hidden="true" /> {busy ? 'Finding rooms…' : 'Find compatible rooms'}
-                </Button>
-              </div>
-            ) : null}
-          </Card>
-
-          <div ref={changedRegionRef} tabIndex={-1} className="min-w-0 focus:outline-none" aria-live="polite">
-            <Card className="overflow-hidden border-t-[3px] border-t-info">
-              <div className="flex items-center justify-between gap-3 border-b border-neutral-100 bg-info-surface px-5 py-4 sm:px-6">
-                <div className="flex items-center gap-3">
-                  <House className="h-5 w-5 text-info-dark" aria-hidden="true" />
-                  <h2 className="font-display text-h4 text-text-primary">Rooms and comparison</h2>
-                </div>
-                {state.results ? <Chip color="info">{state.results.rooms.length} rooms</Chip> : null}
-              </div>
-              {!state.results ? (
-                <div className="grid min-h-72 place-items-center px-6 py-10 text-center">
-                  <div>
-                    <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-info-surface text-2xl" aria-hidden="true">🔎</div>
-                    <p className="mt-4 font-display text-h3 text-text-primary">Your room canvas is ready</p>
-                    <p className="mt-2 max-w-sm text-body-md text-text-secondary">Approve a living brief, then let CoHabby find the practical matches.</p>
-                  </div>
-                </div>
-              ) : state.results.rooms.length === 0 ? (
-                <div className="grid min-h-72 place-items-center px-6 py-10 text-center">
-                  <div>
-                    <p className="text-3xl" aria-hidden="true">🧭</p>
-                    <p className="mt-3 font-display text-h3 text-text-primary">No demo rooms match yet</p>
-                    <p className="mt-2 text-body-sm italic text-text-tertiary">Try another practical brief.</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-5 p-4 sm:p-6">
-                  <div className="grid gap-4 xl:grid-cols-2">
-                    {state.results.rooms.map((room) => (
-                      <RoomCard
-                        key={room.roomRef}
-                        room={room}
-                        checked={selectedRefs.includes(room.roomRef)}
-                        disabled={selectedRefs.length >= 3}
-                        onToggle={() => toggleRoom(room.roomRef)}
-                      />
-                    ))}
-                  </div>
-                  <div className="flex justify-end">
-                    <Button
-                      variant="secondary"
-                      disabled={selectedRefs.length < 2 || selectedRefs.length > 3}
-                      onClick={() => store.compareShortlist({ roomRefs: selectedRefs })}
-                    >
-                      <GitCompareArrows className="h-4 w-4" aria-hidden="true" /> Compare {selectedRefs.length} rooms
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </Card>
-
-            {comparisonRooms.length > 0 ? (
-              <Card role="region" aria-label="Room comparison" className="mt-5 overflow-hidden border-t-[3px] border-t-accent">
-                <div className="flex items-center gap-3 border-b border-neutral-100 bg-accent-surface px-5 py-4 sm:px-6">
-                  <GitCompareArrows className="h-5 w-5 text-accent-dark" aria-hidden="true" />
-                  <h2 className="font-display text-h4 text-text-primary">Decision board</h2>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[620px] border-collapse text-left text-body-md">
-                    <thead>
-                      <tr className="border-b border-neutral-100 bg-neutral-0">
-                        <th className="px-5 py-3 font-display font-semibold text-text-secondary">Practical detail</th>
-                        {comparisonRooms.map((room) => <th key={room.roomRef} className="px-5 py-3 font-display font-semibold text-text-primary">{room.headline}</th>)}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[
-                        ['Monthly price', (room: SafeRoomSummary) => money(room)],
-                        ['Move window', (room: SafeRoomSummary) => label(room.availableWindow)],
-                        ['Home type', (room: SafeRoomSummary) => label(room.homeType)],
-                        ['Practical fit', (room: SafeRoomSummary) => label(room.fitBand)],
-                      ].map(([name, read]) => (
-                        <tr key={String(name)} className="border-b border-neutral-100 last:border-0">
-                          <th className="px-5 py-3 font-medium text-text-secondary">{String(name)}</th>
-                          {comparisonRooms.map((room) => <td key={room.roomRef} className="px-5 py-3 font-medium text-text-primary">{(read as (room: SafeRoomSummary) => string)(room)}</td>)}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                {state.phase === 'COMPARISON_READY' ? (
-                  <div className="grid gap-3 border-t border-neutral-100 px-5 py-4 sm:grid-cols-[1fr_auto_auto] sm:items-end sm:px-6">
-                    <label className="space-y-1.5 text-body-sm font-medium text-text-secondary">
-                      Room
-                      <select value={introRoomRef} onChange={(event) => setIntroRoomRef(event.target.value)} className="min-h-11 w-full rounded-lg border-neutral-300 text-body-md focus:border-info focus:ring-info">
-                        {comparisonRooms.map((room) => <option key={room.roomRef} value={room.roomRef}>{room.headline}</option>)}
-                      </select>
-                    </label>
-                    <label className="space-y-1.5 text-body-sm font-medium text-text-secondary">
-                      Tone
-                      <select value={introTone} onChange={(event) => setIntroTone(event.target.value as typeof introTone)} className="min-h-11 w-full rounded-lg border-neutral-300 text-body-md focus:border-info focus:ring-info">
-                        <option value="warm">Warm</option>
-                        <option value="direct">Direct</option>
-                        <option value="casual">Casual</option>
-                      </select>
-                    </label>
-                    <Button disabled={!introRoomRef} onClick={() => store.prepareIntroduction({ roomRef: introRoomRef, tone: introTone })}>Prepare introduction</Button>
-                  </div>
-                ) : null}
-              </Card>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="mt-5">
-          <BriefProposal store={store} state={state} />
-          {state.introduction ? (
-            <Card className="overflow-hidden border-t-[3px] border-t-success shadow-elevated">
-              <div className="flex items-start gap-3 border-b border-neutral-100 bg-success-surface px-5 py-4 sm:px-6">
-                <ShieldCheck className="mt-0.5 h-5 w-5 text-success-dark" aria-hidden="true" />
+    <MotionConfig reducedMotion="user">
+      <LazyMotion features={domAnimation} strict>
+        <main className="min-h-screen bg-neutral-50 text-text-primary">
+          <div className="mx-auto max-w-[1480px] px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
+            <header className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <BrandDoorwayMark className="h-11 w-11 shrink-0" />
                 <div>
-                  <h2 className="font-display text-h4 text-text-primary">Your introduction stays here</h2>
-                  <p className="mt-1 text-body-md text-text-secondary">Edit the full draft. This demo never sends it.</p>
+                  <p className="font-display text-lg font-bold tracking-tight text-text-primary">CoHabby</p>
+                  <p className="text-body-sm text-text-tertiary">Living Decision Room</p>
                 </div>
               </div>
-              <div className="px-5 py-5 sm:px-6">
-                <label className="block space-y-2 text-body-sm font-medium text-text-secondary">
-                  Introduction draft
-                  <textarea
-                    aria-label="Introduction draft"
-                    value={state.introduction.draft}
-                    maxLength={600}
-                    rows={5}
-                    onChange={(event) => store.updateIntroductionDraft(event.target.value)}
-                    className="w-full resize-y rounded-xl border-neutral-300 text-body-md leading-relaxed text-text-primary focus:border-info focus:ring-info"
-                  />
-                </label>
-                {state.notice?.kind === 'safety' ? (
-                  <p className="mt-3 flex items-start gap-2 rounded-lg bg-warning-surface px-3 py-2 text-body-sm text-warning-dark">
-                    <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" /> {state.notice.message}
-                  </p>
-                ) : null}
+              <div className="flex flex-wrap items-center gap-2">
+                <SiteToolsBadge status={siteToolsStatus} />
+                <Button variant="ghost" onClick={reset} aria-label="Reset demo"><RefreshCw className="h-4 w-4" aria-hidden="true" /> Reset</Button>
               </div>
-              {state.phase === 'INTRODUCTION_STAGED' ? (
-                <div className="flex justify-end border-t border-neutral-100 px-5 py-4 sm:px-6">
-                  <Button disabled={!state.introduction.isSafeToConfirm} onClick={() => store.confirmIntroductionByHuman()}>
-                    <Check className="h-4 w-4" aria-hidden="true" /> Confirm demo introduction
-                  </Button>
-                </div>
-              ) : null}
-              {state.receipt ? (
-                <div className="border-t border-success/20 bg-success-surface px-5 py-4 text-body-md font-medium text-success-dark sm:px-6">
-                  {state.receipt.message}
-                </div>
-              ) : null}
-            </Card>
-          ) : null}
-        </div>
+            </header>
 
-        <aside className="mt-8 flex items-start gap-3 rounded-xl border border-warning/25 bg-warning-surface px-4 py-3 text-body-sm text-warning-dark">
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-          <p>CoHabby compares budget, move timing, pets, smoking, quiet time, and shared-home rules. It does not rank homes or people by protected traits.</p>
-        </aside>
+            {siteToolsStatus === 'unsupported' ? <p className="mt-3 rounded-xl border border-neutral-200 bg-neutral-0 px-4 py-2.5 text-body-sm text-text-secondary">Site tools are not available here. You can still use the full demo on this page.</p> : null}
 
-        <footer className="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-neutral-200 pt-5 text-body-sm text-text-tertiary">
-          <p>Synthetic challenge data. No login, model API, or real message.</p>
-          <p>Source {sourceRevision.slice(0, 12)}</p>
-        </footer>
-      </div>
-    </main>
+            <section className="grid gap-5 pb-4 pt-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:pt-8">
+              <div>
+                <p className="font-display text-sm font-semibold uppercase tracking-[0.16em] text-primary-ink">One room decision. Made together.</p>
+                <h1 className="mt-2 max-w-4xl font-display text-4xl font-bold leading-[0.98] tracking-[-0.04em] text-text-primary sm:text-5xl lg:text-6xl">Tell CoHabby how you want to live.</h1>
+                <p className="mt-3 max-w-2xl text-body-lg text-text-secondary">Your browser agent can sort the options. You make the calls.</p>
+              </div>
+              {state.phase === 'READY' ? <Button className="w-full sm:w-auto" onClick={() => runHumanMutation(activity, 'stage_living_brief', () => store.stageLivingBrief(sampleBrief), (result) => [result.proposalRef])}>Try a New York example</Button> : null}
+            </section>
+
+            <SampleLivingTokens />
+
+            <LayoutGroup id="living-matchboard">
+              <section className="mt-4 grid items-start gap-4 lg:grid-cols-[210px_minmax(0,1fr)]" aria-label="Decision workspace">
+                <div
+                  ref={changedRegionRef}
+                  tabIndex={-1}
+                  role="region"
+                  aria-label="Living Matchboard"
+                  aria-live="polite"
+                  data-visual-stage={visualStage}
+                  className="order-1 relative min-w-0 overflow-hidden rounded-[1.75rem] border border-neutral-200 bg-[#F8EFE8] p-3 shadow-elevated focus:outline-none sm:p-4 lg:order-2 lg:p-5"
+                >
+                  <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-55" viewBox="0 0 1000 640" preserveAspectRatio="none" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="matchboard-ribbon" x1="80" y1="120" x2="930" y2="510" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#FF6B4A" />
+                        <stop offset="0.52" stopColor="#F4C95D" />
+                        <stop offset="1" stopColor="#00A699" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M70 125 C230 125 190 260 345 260 S500 405 650 405 S805 520 940 520" fill="none" stroke="#EADCD2" strokeWidth="18" strokeLinecap="round" />
+                    <m.path d="M70 125 C230 125 190 260 345 260 S500 405 650 405 S805 520 940 520" fill="none" stroke="url(#matchboard-ribbon)" strokeWidth="18" strokeLinecap="round" initial={false} animate={{ pathLength: stageProgress[visualStage] }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} />
+                  </svg>
+
+                  <div className="relative z-10">
+                    <LivingBriefTray state={state} />
+
+                    <m.section layout className="mt-4 rounded-[1.35rem] border border-neutral-200 bg-neutral-0/95 p-3 shadow-card sm:p-4" aria-label="Room cards">
+                      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <p className="text-body-sm font-semibold uppercase tracking-[0.12em] text-info-dark">On the table</p>
+                          <h2 className="font-display text-h4 font-semibold text-text-primary">{state.results ? `${state.results.rooms.length} practical options` : 'Room cards land here'}</h2>
+                        </div>
+                        {state.results ? <Chip color="info">Synthetic demo rooms</Chip> : null}
+                      </div>
+
+                      {!state.results ? <EmptyRoomSlots /> : state.results.rooms.length === 0 ? (
+                        <div className="grid min-h-56 place-items-center text-center"><div><p className="font-display text-h3 text-text-primary">No demo rooms match yet</p><p className="mt-2 text-body-sm text-text-tertiary">Try another practical brief.</p></div></div>
+                      ) : comparisonRooms.length > 0 ? (
+                        <ComparisonStage rooms={comparisonRooms} dimensions={state.comparison?.dimensions ?? []} />
+                      ) : (
+                        <AnimatePresence mode="popLayout">
+                          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                            {state.results.rooms.map((room) => <RoomCard key={room.roomRef} room={room} checked={selectedRefs.includes(room.roomRef)} disabled={selectedRefs.length >= 3} onToggle={() => toggleRoom(room.roomRef)} />)}
+                          </div>
+                        </AnimatePresence>
+                      )}
+
+                      {state.phase === 'BRIEF_APPLIED_BY_HUMAN' ? <div className="mt-4 flex justify-end"><Button disabled={busy} onClick={() => void findRooms()}><Search className="h-4 w-4" aria-hidden="true" />{busy ? 'Finding rooms…' : 'Find compatible rooms'}</Button></div> : null}
+                      {state.phase === 'RESULTS_READY' ? <div className="mt-4 flex flex-wrap items-center justify-between gap-3"><p className="text-body-sm text-text-secondary">Pick 2 or 3 rooms to line up.</p><Button variant="secondary" disabled={selectedRefs.length < 2 || selectedRefs.length > 3} onClick={() => runHumanMutation(activity, 'compare_shortlist', () => store.compareShortlist({ roomRefs: selectedRefs }), (result) => result.roomRefs)}><GitCompareArrows className="h-4 w-4" aria-hidden="true" />Compare {selectedRefs.length} rooms</Button></div> : null}
+                      {state.phase === 'COMPARISON_READY' ? (
+                        <div className="mt-4 grid gap-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
+                          <label className="space-y-1.5 text-body-sm font-medium text-text-secondary">Room<select value={introRoomRef} onChange={(event) => setIntroRoomRef(event.target.value)} className="min-h-11 w-full rounded-lg border-neutral-300 bg-white text-body-md focus:border-info focus:ring-info">{comparisonRooms.map((room) => <option key={room.roomRef} value={room.roomRef}>{room.headline}</option>)}</select></label>
+                          <label className="space-y-1.5 text-body-sm font-medium text-text-secondary">Tone<select value={introTone} onChange={(event) => setIntroTone(event.target.value as typeof introTone)} className="min-h-11 w-full rounded-lg border-neutral-300 bg-white text-body-md focus:border-info focus:ring-info"><option value="warm">Warm</option><option value="direct">Direct</option><option value="casual">Casual</option></select></label>
+                          <Button disabled={!introRoomRef} onClick={() => runHumanMutation(activity, 'prepare_introduction', () => store.prepareIntroduction({ roomRef: introRoomRef, tone: introTone }), (result) => [result.roomRef])}>Prepare introduction</Button>
+                        </div>
+                      ) : null}
+                    </m.section>
+
+                    <AnimatePresence>
+                      <BriefProposal store={store} state={state} activity={activity} />
+                    </AnimatePresence>
+
+                    {state.introduction ? <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_390px]">{introductionRoom ? <m.section layout role="region" aria-label="Chosen room" className="rounded-[1.35rem] border border-dashed border-neutral-300 bg-neutral-0/70 p-3 sm:p-5"><div className="mb-3 flex items-center gap-3"><BrandDoorwayMark className="h-11 w-11" /><div><p className="text-body-sm font-semibold uppercase tracking-[0.12em] text-primary-ink">Chosen for the note</p><p className="font-display text-h4 font-semibold text-text-primary">One room. One note. Your call.</p></div></div><RoomCard room={introductionRoom} checked disabled onToggle={() => undefined} compact selectable={false} /></m.section> : null}<IntroductionPanel store={store} state={state} activity={activity} /></div> : null}
+                  </div>
+                </div>
+                <div className="order-2 lg:order-1">
+                  <AgentActivityRail phase={state.phase} activity={activitySnapshot} />
+                </div>
+              </section>
+            </LayoutGroup>
+
+            <details className="mt-4 rounded-xl border border-warning/25 bg-warning-surface px-4 py-3 text-body-sm text-warning-dark">
+              <summary className="cursor-pointer font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warning">Matches use practical living needs only.</summary>
+              <p className="mt-2 max-w-4xl">CoHabby compares budget, move timing, pets, smoking, quiet time, and shared-home rules. It does not rank homes or people by protected traits.</p>
+            </details>
+
+            <footer className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-neutral-200 py-4 text-body-sm text-text-tertiary">
+              <p>Synthetic data. No login, model API, microphone, or real message.</p>
+              <p>Source {sourceRevision.slice(0, 12)}</p>
+            </footer>
+          </div>
+        </main>
+      </LazyMotion>
+    </MotionConfig>
   );
 }

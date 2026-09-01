@@ -21,9 +21,11 @@ The following work is new for the challenge:
 - Human-only brief application and demo introduction confirmation.
 - Unsupported-browser, mobile, tablet, and desktop experiences.
 - Registration cleanup, cancellation, stale-reference checks, and security headers.
+- The Living Matchboard redesign with a five-step activity rail, SVG room cards, one causal doorway ribbon, and reduced-motion behavior.
+- A separate visible activity store that records browser-agent and human actions without changing the seven-phase product state machine.
 - Public tests, setup instructions, provenance notes, demo script, and submission copy.
 
-The challenge commit range begins at `7df5d15` and ends at the immutable `submission-2026-09-03` tag. The live footer shows the exact deployed revision.
+The challenge commit range begins at `7df5d15`. The immutable `submission-2026-09-03` tag preserves the first complete version. The redesigned judged revision is marked by `submission-2026-09-03-final`, and the live footer shows its exact deployed SHA.
 
 ## Public tools
 

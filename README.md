@@ -1,6 +1,6 @@
 # CoHabby Living Decision Room
 
-I built Living Decision Room to test a simple idea: finding a room works better when a person and their browser agent share the same page and the same state.
+I built Living Decision Room to test a simple idea: finding a room works better when a person and their browser agent share the same page and the same state. The Living Matchboard makes that shared work visible as a brief, a hand of room cards, a decision line, and one editable note.
 
 The agent can read the current brief, stage practical housing needs, ask CoHabby for synthetic room options, compare a shortlist, and prepare an introduction. The person applies the brief and confirms the introduction. No tool can send a message or touch a real listing.
 
@@ -12,7 +12,7 @@ Use the sample prompt in a WebMCP-capable browser:
 
 > Help me find a quiet room in New York under $1,900 a month. I want to move within 30 days, I do not smoke, and I have a cat. Compare the strongest options and prepare a warm introduction to the best one.
 
-The page also has a complete human path. If site tools are unavailable, click **Load sample brief** and continue through the same state machine.
+The page also has a complete human path. If site tools are unavailable, click **Try a New York example** and continue through the same state machine.
 
 ## Five site tools
 
@@ -26,7 +26,7 @@ The top-level page registers five imperative tools with `document.modelContext.r
 | `compare_shortlist` | Builds a board from two or three current room references. |
 | `prepare_introduction` | Creates an editable local draft without sending it. |
 
-The schemas are bounded and reject unknown properties. The same validators run inside the callbacks. Ajv compiles them into committed standalone ESM so the production CSP does not need `unsafe-eval`.
+The schemas are bounded and reject unknown properties. The same validators run inside the callbacks. Ajv compiles them into committed standalone ESM so the production CSP does not need `unsafe-eval`. A separate tab-local activity store shows each tool on the Matchboard without changing the tool result or product state.
 
 ## Run locally
 
@@ -49,7 +49,7 @@ npm run build
 npm run audit:prod
 ```
 
-The app has no backend, login, analytics, cookies, model API, or production connection. All housing records are synthetic and live in `lib/decision-room/living-data-source.ts`.
+The app has no backend, login, analytics, cookies, microphone, model API, or production connection. All housing records are synthetic and live in `lib/decision-room/living-data-source.ts`.
 
 ## Human control and housing safety
 
@@ -67,14 +67,16 @@ The confirmation receipt says exactly: `Demo confirmed. No real message was sent
 
 - `lib/decision-room`: typed state, synthetic data adapter, safe templates, and store actions.
 - `lib/webmcp`: public schemas, standalone validators, output safety, tool callbacks, and registration cleanup.
-- `components/decision-room`: the shared human and agent workspace.
-- `tests`: contracts, transitions, cancellation, registration, security headers, and the full human path.
+- `components/decision-room`: the animated Matchboard, room-card hand, agent rail, comparison, and human controls.
+- `tests`: contracts, transitions, visible activity, cancellation, registration, security headers, voice exclusion, and the full human path.
 
 ## Challenge provenance
 
 CoHabby existed before the challenge. Living Decision Room, its five WebMCP tools, synthetic data, comparison board, confirmation flow, and this public repository were created during the WebMCP Challenge submission period. [CHALLENGE_WORK.md](./CHALLENGE_WORK.md) separates that work from the existing product.
 
-The live footer prints the source revision supplied at deployment. The immutable `submission-2026-09-03` tag identifies the judged source.
+The live footer prints the source revision supplied at deployment. The original `submission-2026-09-03` tag preserves the first complete build. The immutable `submission-2026-09-03-final` tag identifies the redesigned judged source.
+
+The automated, browser, responsive, and isolation checks are summarized in [Living Matchboard verification](./docs/MATCHBOARD_EVIDENCE.md).
 
 ## License
 

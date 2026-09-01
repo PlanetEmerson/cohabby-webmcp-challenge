@@ -1,3 +1,7 @@
+import type {
+  DecisionRoomActivityStore,
+  DecisionRoomActivityToken,
+} from '@/lib/decision-room/activity-store';
 import { DecisionRoomError, type DecisionRoomStore } from '@/lib/decision-room/store';
 import type { ToolErrorCode } from './tool-contracts';
 import {
@@ -24,9 +28,15 @@ function errorCode(error: unknown): ToolErrorCode {
   return 'internal_error';
 }
 
-function failure(store: DecisionRoomStore, error: unknown) {
+function failure(
+  store: DecisionRoomStore,
+  error: unknown,
+  activity?: DecisionRoomActivityStore,
+  token?: DecisionRoomActivityToken,
+) {
   const state = store.getState();
   const code = errorCode(error);
+  if (token) activity?.fail(token, code, state.stateVersion);
   return assertSafeToolOutput({
     schemaVersion: 1,
     stateVersion: state.stateVersion,
@@ -59,7 +69,10 @@ function throwIfCanceled(signal: AbortSignal): void {
   if (signal.aborted) throw new DecisionRoomError('canceled');
 }
 
-export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContextTool[] {
+export function createWebMcpTools(
+  store: DecisionRoomStore,
+  activity?: DecisionRoomActivityStore,
+): WebMCP.ModelContextTool[] {
   return [
     {
       name: 'get_living_context',
@@ -68,11 +81,19 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
       inputSchema: toolInputSchemas.get_living_context,
       annotations: { readOnlyHint: true },
       execute: (input) => {
+        const token = activity?.begin('agent', 'get_living_context');
         try {
           parseToolInput('get_living_context', input);
-          return livingContext(store);
+          const result = livingContext(store);
+          if (token) {
+            activity?.complete(token, {
+              stateVersion: store.getState().stateVersion,
+              targetRefs: store.getState().results?.rooms.map((room) => room.roomRef) ?? [],
+            });
+          }
+          return result;
         } catch (error) {
-          return failure(store, error);
+          return failure(store, error, activity, token);
         }
       },
     },
@@ -83,12 +104,19 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
       inputSchema: toolInputSchemas.stage_living_brief,
       annotations: { readOnlyHint: false },
       execute: async (input, options) => {
+        const token = activity?.begin('agent', 'stage_living_brief');
         const signal = invocationSignal(options);
         try {
           throwIfCanceled(signal);
           const parsed = parseToolInput('stage_living_brief', input);
           const result = store.stageLivingBrief(parsed);
           await store.waitForRendered(result.stateVersion, signal);
+          if (token) {
+            activity?.complete(token, {
+              stateVersion: result.stateVersion,
+              targetRefs: [result.proposalRef],
+            });
+          }
           return assertSafeToolOutput({
             schemaVersion: 1,
             stateVersion: result.stateVersion,
@@ -99,7 +127,7 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
             visibleConfirmation: true,
           });
         } catch (error) {
-          return failure(store, error);
+          return failure(store, error, activity, token);
         }
       },
     },
@@ -110,12 +138,19 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
       inputSchema: toolInputSchemas.find_compatible_rooms,
       annotations: { readOnlyHint: false, untrustedContentHint: true },
       execute: async (input, options) => {
+        const token = activity?.begin('agent', 'find_compatible_rooms');
         const signal = invocationSignal(options);
         try {
           throwIfCanceled(signal);
           const parsed = parseToolInput('find_compatible_rooms', input);
           const result = await store.findCompatibleRooms(parsed, signal);
           await store.waitForRendered(result.stateVersion, signal);
+          if (token) {
+            activity?.complete(token, {
+              stateVersion: result.stateVersion,
+              targetRefs: result.status === 'unsupported_market' ? [] : result.visibleRoomRefs,
+            });
+          }
           if (result.status === 'unsupported_market') {
             return assertSafeToolOutput({
               schemaVersion: 1,
@@ -136,7 +171,7 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
             rooms: state.results?.rooms ?? [],
           });
         } catch (error) {
-          return failure(store, error);
+          return failure(store, error, activity, token);
         }
       },
     },
@@ -147,12 +182,19 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
       inputSchema: toolInputSchemas.compare_shortlist,
       annotations: { readOnlyHint: false, untrustedContentHint: true },
       execute: async (input, options) => {
+        const token = activity?.begin('agent', 'compare_shortlist');
         const signal = invocationSignal(options);
         try {
           throwIfCanceled(signal);
           const parsed = parseToolInput('compare_shortlist', input);
           const result = store.compareShortlist(parsed);
           await store.waitForRendered(result.stateVersion, signal);
+          if (token) {
+            activity?.complete(token, {
+              stateVersion: result.stateVersion,
+              targetRefs: result.roomRefs,
+            });
+          }
           return assertSafeToolOutput({
             schemaVersion: 1,
             stateVersion: result.stateVersion,
@@ -162,7 +204,7 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
             dimensions: result.dimensions,
           });
         } catch (error) {
-          return failure(store, error);
+          return failure(store, error, activity, token);
         }
       },
     },
@@ -173,12 +215,19 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
       inputSchema: toolInputSchemas.prepare_introduction,
       annotations: { readOnlyHint: false, untrustedContentHint: true },
       execute: async (input, options) => {
+        const token = activity?.begin('agent', 'prepare_introduction');
         const signal = invocationSignal(options);
         try {
           throwIfCanceled(signal);
           const parsed = parseToolInput('prepare_introduction', input);
           const result = store.prepareIntroduction(parsed);
           await store.waitForRendered(result.stateVersion, signal);
+          if (token) {
+            activity?.complete(token, {
+              stateVersion: result.stateVersion,
+              targetRefs: [result.roomRef],
+            });
+          }
           const introduction = store.getState().introduction;
           return assertSafeToolOutput({
             schemaVersion: 1,
@@ -192,7 +241,7 @@ export function createWebMcpTools(store: DecisionRoomStore): WebMCP.ModelContext
             visibleConfirmation: true,
           });
         } catch (error) {
-          return failure(store, error);
+          return failure(store, error, activity, token);
         }
       },
     },

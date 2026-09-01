@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { createDecisionRoomActivityStore } from '@/lib/decision-room/activity-store';
 import { createDecisionRoomStore } from '@/lib/decision-room/store';
 import { createWebMcpTools } from '@/lib/webmcp/tools';
 
@@ -26,6 +27,39 @@ async function executeAfterRendering(
 }
 
 describe('Living Decision Room WebMCP tools', () => {
+  it('makes read and mutation activity visible without changing tool output', async () => {
+    const store = createDecisionRoomStore();
+    const activity = createDecisionRoomActivityStore();
+    const tools = new Map(createWebMcpTools(store, activity).map((tool) => [tool.name, tool]));
+
+    await tools.get('get_living_context')!.execute({}, {
+      signal: new AbortController().signal,
+    });
+    expect(activity.getSnapshot()).toMatchObject({
+      actor: 'agent',
+      action: 'get_living_context',
+      status: 'complete',
+      stateVersion: 1,
+    });
+
+    const staged = Promise.resolve(tools.get('stage_living_brief')!.execute(sampleBrief, {
+      signal: new AbortController().signal,
+    }));
+    await Promise.resolve();
+    expect(activity.getSnapshot()).toMatchObject({
+      action: 'stage_living_brief',
+      status: 'running',
+    });
+
+    store.acknowledgeRendered(2);
+    await staged;
+    expect(activity.getSnapshot()).toMatchObject({
+      action: 'stage_living_brief',
+      status: 'complete',
+      stateVersion: 2,
+    });
+  });
+
   it('supports Chrome preview runtimes that omit callback options while retaining visible completion', async () => {
     const store = createDecisionRoomStore();
     const stage = createWebMcpTools(store).find((tool) => tool.name === 'stage_living_brief')!;
@@ -40,7 +74,8 @@ describe('Living Decision Room WebMCP tools', () => {
 
   it('returns typed failures and does not mutate state for a pre-canceled invocation', async () => {
     const store = createDecisionRoomStore();
-    const tools = new Map(createWebMcpTools(store).map((tool) => [tool.name, tool]));
+    const activity = createDecisionRoomActivityStore();
+    const tools = new Map(createWebMcpTools(store, activity).map((tool) => [tool.name, tool]));
 
     await expect(tools.get('find_compatible_rooms')!.execute({}, {
       signal: new AbortController().signal,
@@ -63,6 +98,12 @@ describe('Living Decision Room WebMCP tools', () => {
       stateVersion: 1,
       status: 'error',
       error: { code: 'canceled' },
+    });
+    expect(activity.getSnapshot()).toMatchObject({
+      action: 'stage_living_brief',
+      status: 'canceled',
+      errorCode: 'canceled',
+      stateVersion: 1,
     });
     expect(store.getState()).toMatchObject({ phase: 'READY', stateVersion: 1, stagedBrief: null });
   });
