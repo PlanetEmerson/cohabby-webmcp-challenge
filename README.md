@@ -74,6 +74,15 @@ git diff --check
 
 The app has no backend, login, analytics, cookies, persistent storage, microphone, model API, or production CoHabby connection.
 
+## Submission package
+
+- [Final demo narration and shot list](./docs/DEMO_SCRIPT.md)
+- [Screen capture and assembly plan](./docs/VIDEO_CAPTURE_PLAN.md)
+- [YouTube captions](./docs/DEMO_CAPTIONS.srt)
+- [YouTube title, description, and upload settings](./docs/YOUTUBE_PACKAGE.md)
+- [Paste-ready Devpost answers and testing instructions](./docs/DEVPOST_SUBMISSION.md)
+- [Final submission checklist](./docs/FINAL_SUBMISSION_CHECKLIST.md)
+
 ## Repository map
 
 - `lib/decision-room`: eight-phase state machine, deterministic people-and-home fixtures, safe note templates, and UI-only asset maps.
@@ -81,13 +90,13 @@ The app has no backend, login, analytics, cookies, persistent storage, microphon
 - `components/decision-room`: one-stage experience, six-step WebMCP ribbon, people-and-home cards, Synergy Lens, comparison, and human controls.
 - `public/assets`: original fictional portraits, original fictional homes, and the founder-authorized CoHabby app icon.
 - `tests`: contracts, state transitions, cancellation, tool lifecycle, safety, registration, security headers, accessibility behavior, contrast, and the complete human path.
-- `docs`: exact asset prompts, demo script, Devpost draft, and claim-to-evidence map.
+- `docs`: exact asset prompts, final video package, Devpost copy, submission checklist, and claim-to-evidence map.
 
 ## Challenge provenance
 
 CoHabby existed before the challenge. This standalone public repository contains only the challenge app and synthetic data. It contains no private Git history, production configuration, member data, backend snapshot, or private product code.
 
-[CHALLENGE_WORK.md](./CHALLENGE_WORK.md) separates pre-existing brand context from work created for the challenge. The live footer prints the exact deployment revision. The immutable tag `submission-2026-09-03-people-first-v4` identifies the polished judged source. The earlier V3 tag remains unchanged as a rollback-safe record.
+[CHALLENGE_WORK.md](./CHALLENGE_WORK.md) separates pre-existing brand context from work created for the challenge. The live footer prints the exact deployment revision. The immutable tag `submission-2026-09-03-final` identifies the judged source. The earlier V3 and V4 tags remain unchanged as rollback-safe records.
 
 ## License
 

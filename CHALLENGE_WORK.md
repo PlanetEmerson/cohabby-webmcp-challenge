@@ -51,4 +51,4 @@ Portrait appearance is decorative. It never enters filtering, ordering, a tool i
 
 This challenge build includes no production search, real members, real listings, authentication, payments, invitations, messaging, voice, external MCP, model API, Firebase, Algolia, Stripe, RevenueCat, Cloud Run, or AI-platform submission.
 
-The live footer and immutable V4 tag bind the final judged deployment to this public source after the clean-clone release gate. The earlier V3 tag stays unchanged.
+The live footer and immutable final tag bind the judged deployment to this public source after the clean-clone release gate. The earlier V3 and V4 tags stay unchanged.
