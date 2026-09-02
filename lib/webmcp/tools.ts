@@ -176,7 +176,7 @@ export function createWebMcpTools(
     {
       name: 'find_compatible_rooms',
       title: 'Find compatible rooms',
-      description: 'Find synthetic demo rooms using the practical living brief the person approved on this page.',
+      description: 'Find demo roommate matches using the practical living plan the person approved on this page.',
       inputSchema: toolInputSchemas.find_compatible_rooms,
       annotations: { readOnlyHint: false, untrustedContentHint: true },
       execute: async (input, options) => {
@@ -224,7 +224,7 @@ export function createWebMcpTools(
     {
       name: 'explain_synergy_match',
       title: 'Explain Synergy match',
-      description: 'Open the visible synthetic Synergy explanation for one current people-and-home match.',
+      description: 'Open the visible Synergy explanation for one current people-and-home match.',
       inputSchema: toolInputSchemas.explain_synergy_match,
       annotations: { readOnlyHint: false, untrustedContentHint: true },
       execute: async (input, options) => {

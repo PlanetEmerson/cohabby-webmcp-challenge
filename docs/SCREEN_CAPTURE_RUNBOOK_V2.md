@@ -29,7 +29,7 @@ Click anywhere on Maya's card, then anywhere on Jordan's card. Let one **Why Syn
 
 ### Prompt C · Synergy Lens
 
-> Use the site tools to explain Maya's synthetic Synergy read. Stop on the explanation.
+> Use the site tools to explain Maya's Synergy read. Stop on the explanation.
 
 Hold until the large `92 Synergy` gauge, evidence ring, portrait, home, and three reasons are all visible.
 

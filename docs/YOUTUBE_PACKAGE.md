@@ -8,13 +8,13 @@ CoHabby Living | OpenAI WebMCP Challenge
 
 CoHabby Living is a compatibility-first roommate experience built for the OpenAI WebMCP Challenge.
 
-A browser agent can read how someone wants to live, stage a plan for human approval, find fictional roommate matches, explain a fixed synthetic Synergy read, compare daily life, and prepare a first hello. The person approves the plan and confirms the introduction.
+A browser agent can read how someone wants to live, stage a plan for human approval, find roommate matches, explain a Synergy read, compare daily life, and prepare a first hello. The person approves the plan and confirms the introduction.
 
 Live demo: https://webmcp.cohabby.com
 
 Public source: https://github.com/PlanetEmerson/cohabby-webmcp-challenge
 
-All people, homes, and Synergy Scores in this demo are fictional. The demo does not use CoHabby's production scoring model and sends no real message.
+This challenge build uses demo profiles and scores. No real message is sent.
 
 ## Thumbnail frame
 

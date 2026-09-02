@@ -329,13 +329,13 @@ export function DecisionRoom({ sourceRevision }: { sourceRevision: string }) {
               </div>
             </LayoutGroup>
 
-            <aside className="mt-4 flex flex-col gap-2 rounded-2xl border border-warning/25 bg-warning-surface px-4 py-3 text-body-sm text-warning-dark sm:flex-row sm:items-center" aria-label="Synthetic Synergy disclosure">
+            <aside className="mt-4 flex flex-col gap-2 rounded-2xl border border-warning/25 bg-warning-surface px-4 py-3 text-body-sm text-warning-dark sm:flex-row sm:items-center" aria-label="Challenge demo disclosure">
               <ShieldCheck className="h-5 w-5 shrink-0" aria-hidden="true" />
-              <p><strong>A safe, fictional demo.</strong> Every person, home, and Synergy Score here is fictional. No production scoring runs, protected traits never enter the search, and no message leaves this page.</p>
+              <p><strong>Challenge demo.</strong> These profiles and scores are examples. No real message is sent.</p>
             </aside>
 
             <footer className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-neutral-200 py-4 text-body-sm text-text-tertiary">
-              <p>Synthetic people and homes. No login, model API, microphone, or real message.</p>
+              <p>Built for the WebMCP Challenge. No login required.</p>
               <p>Source {sourceRevision.slice(0, 12)}</p>
             </footer>
           </div>

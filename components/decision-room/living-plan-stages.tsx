@@ -69,7 +69,7 @@ export function ReadyStage({ onStart }: { onStart: () => void }) {
 
       <ActionDock
         instruction="Watch your daily habits turn into roommate matches."
-        status="Fictional people, homes, and Synergy Scores."
+        status="A guided roommate-matching example."
         primaryLabel="Try the roommate demo"
         onPrimary={onStart}
       />
@@ -215,7 +215,7 @@ export function PlanAppliedStage({
       <div className="mx-auto w-full max-w-4xl text-center">
         <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-success-surface text-success-dark shadow-sm"><Sparkles className="h-7 w-7" aria-hidden="true" /></span>
         <h2 className="stage-copy-halo mt-4 font-display text-3xl font-bold tracking-[-0.03em] text-text-primary sm:text-4xl">Your living plan is ready.</h2>
-        <p className="stage-copy-soft mx-auto mt-2 max-w-2xl text-body-lg text-text-secondary">Next, CoHabby will find fictional people whose home habits may fit yours.</p>
+        <p className="stage-copy-soft mx-auto mt-2 max-w-2xl text-body-lg text-text-secondary">Next, CoHabby will find people whose home habits may fit yours.</p>
         <div className="mt-6 text-left"><LivingPlanTiles brief={state.appliedBrief ?? sampleLivingPlan} /></div>
       </div>
       <ActionDock

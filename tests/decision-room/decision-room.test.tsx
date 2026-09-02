@@ -51,6 +51,9 @@ describe('CoHabby Living human experience', () => {
     expect(screen.getByText('Compatibility-first roommate finder')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Live with someone who gets you.' })).toBeInTheDocument();
     expect(screen.getByText('CoHabby finds roommates whose habits fit yours. Your browser agent does the sorting. You choose who to meet.')).toBeInTheDocument();
+    expect(screen.getByText('Challenge demo.')).toBeInTheDocument();
+    expect(screen.getByText('These profiles and scores are examples. No real message is sent.')).toBeInTheDocument();
+    expect(screen.getByText('Built for the WebMCP Challenge. No login required.')).toBeInTheDocument();
     const stage = screen.getByRole('region', { name: 'People-first decision stage' });
     expect(stage).toHaveAttribute('data-visual-stage', 'ready');
     expect(screen.getByRole('list', { name: 'CoHabby and browser agent steps' }).children).toHaveLength(6);
@@ -61,6 +64,7 @@ describe('CoHabby Living human experience', () => {
     visibleCopy.querySelector('[data-exact-tool-disclosure]')?.remove();
     expect(visibleCopy.textContent).not.toMatch(/\bbrief\b/i);
     expect(visibleCopy.textContent).not.toMatch(/dating|romance|chemistry|relationship/i);
+    expect(visibleCopy.textContent).not.toMatch(/\b(?:synthetic|fictional)\b/i);
 
     await user.click(screen.getByRole('button', { name: 'Try the roommate demo' }));
     expect(screen.getByRole('region', { name: 'Check your living plan' })).toBeInTheDocument();
@@ -77,6 +81,7 @@ describe('CoHabby Living human experience', () => {
 
     await user.click(screen.getByRole('button', { name: 'Show my matches' }));
     expect(await screen.findByText('Quiet room with sunny shared space')).toBeInTheDocument();
+    expect(screen.getByText('3 roommate matches')).toBeInTheDocument();
     expect(screen.getByText('Maya')).toBeInTheDocument();
     expect(screen.getByText('92')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Synthetic demo portrait of Maya' })).toBeInTheDocument();
@@ -87,10 +92,12 @@ describe('CoHabby Living human experience', () => {
     await user.click(screen.getByRole('button', { name: "Why Maya's Synergy?" }));
     expect(screen.getByRole('region', { name: 'Synthetic Synergy explanation for Maya' })).toBeInTheDocument();
     expect(screen.getByText('Both prefer quiet mornings')).toBeInTheDocument();
+    expect(screen.getByText('This score explains practical home habits only.')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Compare 2 roommates' }));
     const comparison = screen.getByRole('region', { name: 'People and home comparison' });
     expect(within(comparison).getByRole('table', { name: 'People and home comparison details' })).toBeInTheDocument();
+    expect(within(comparison).getByRole('rowheader', { name: 'Synergy' })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: 'Say hello to Maya' })).toBeChecked();
     expect(screen.getByRole('radio', { name: 'Warm tone' })).toBeChecked();
 

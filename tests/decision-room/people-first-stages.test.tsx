@@ -147,7 +147,7 @@ describe('people-first visual stages', () => {
   });
 
   it('uses the lighter CoHabby logo gradient and stronger dock copy', () => {
-    render(<ActionDock instruction="Watch your daily habits turn into roommate matches." status="Fictional people and homes." primaryLabel="Try the roommate demo" onPrimary={() => undefined} />);
+    render(<ActionDock instruction="Watch your daily habits turn into roommate matches." status="A guided roommate-matching example." primaryLabel="Try the roommate demo" onPrimary={() => undefined} />);
 
     expect(screen.getByText('Watch your daily habits turn into roommate matches.')).toHaveClass('font-bold', 'sm:text-lg');
     expect(screen.getByRole('button', { name: 'Try the roommate demo' })).toHaveClass(

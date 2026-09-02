@@ -46,7 +46,7 @@ function activityMessage(activity: DecisionRoomActivitySnapshot): string {
     case 'get_living_context': return 'Your agent read your living habits.';
     case 'stage_living_brief': return 'Your choices are ready to review.';
     case 'find_compatible_rooms': return `${activity.targetRefs.length} roommate matches added to the page.`;
-    case 'explain_synergy_match': return 'The synthetic Synergy read is open.';
+    case 'explain_synergy_match': return 'The Synergy read is open.';
     case 'return_to_results': return 'Your roommate matches are back.';
     case 'compare_shortlist': return `${activity.targetRefs.length} roommates are side by side.`;
     case 'prepare_introduction': return 'Your first hello is ready to review.';

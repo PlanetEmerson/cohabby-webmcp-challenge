@@ -40,7 +40,7 @@ On screen: Run `explain_synergy_match` for Maya. Hold on the large Synergy Lens,
 
 Narration:
 
-> This Synergy Lens is the signature WebMCP moment. It opens from a live match and explains three practical reasons our household rhythms may work. The score is a fixed synthetic fixture. It never uses protected traits or CoHabby's production model.
+> This Synergy Lens is the signature WebMCP moment. It opens from a live match and explains three practical reasons our household rhythms may work. This challenge uses demo scores.
 
 ## 1:32 to 1:54
 
@@ -64,7 +64,7 @@ On screen: Use a clean three-shot proof sequence: one strict schema, one cancell
 
 Narration:
 
-> Under the hood, every tool has a strict schema, current-state checks, cancellation, safe output validation, and a render acknowledgement. The source, synthetic fixtures, assets, and tests are all public, and the live footer identifies the exact deployed revision.
+> Under the hood, every tool has a strict schema, current-state checks, cancellation, safe output validation, and a render acknowledgement. The source, assets, and tests are public, and the live footer identifies the exact deployed revision.
 
 ## 2:38 to 2:53
 

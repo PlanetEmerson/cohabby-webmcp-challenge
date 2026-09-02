@@ -12,7 +12,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL('https://webmcp.cohabby.com'),
   title: 'CoHabby Living | Compatibility-first roommate finder',
-  description: 'Use six WebMCP tools to explore fictional roommates, synthetic Synergy reads, home context, and a human-approved introduction.',
+  description: 'Use six WebMCP tools to explore roommate matches, Synergy reads, home context, and a human-approved introduction.',
   applicationName: 'CoHabby Living',
   icons: { icon: '/assets/brand/cohabby-app-icon.png' },
   robots: { index: true, follow: true },

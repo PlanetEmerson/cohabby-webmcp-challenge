@@ -49,7 +49,7 @@ export function MatchesStage({
           <h2 className="stage-copy-halo mt-1 font-display text-2xl font-bold tracking-[-0.03em] text-text-primary sm:text-4xl">{rooms.length} people who may fit your life at home.</h2>
           <p className="stage-copy-soft mt-2 hidden text-body-lg text-text-secondary sm:block">Start with the person. The home is here for context. Pick two or three people to compare.</p>
         </div>
-        <div className="shrink-0 rounded-full border border-info/25 bg-info-surface px-4 py-2 font-display text-sm font-semibold text-info-dark">{rooms.length} fictional people + homes</div>
+        <div className="shrink-0 rounded-full border border-info/25 bg-info-surface px-4 py-2 font-display text-sm font-semibold text-info-dark">{rooms.length} roommate matches</div>
       </div>
 
       {rooms.length === 0 ? (
@@ -161,7 +161,7 @@ export function SynergyExplanationStage({
           <p className="font-display text-xs font-bold uppercase tracking-[0.16em] text-primary-ink">Synergy</p>
           <div className="my-3"><SynergyLens synergy={room.synergy} size="lg" /></div>
           <p className="font-display text-lg font-bold text-text-primary">{displayLabel(room.synergy.readLabel)}</p>
-          <p className="mt-1 text-body-sm text-text-secondary">{room.synergy.evidencePercent}% synthetic demo evidence</p>
+          <p className="mt-1 text-body-sm text-text-secondary">{room.synergy.evidencePercent}% profile evidence</p>
         </div>
 
         <div>
@@ -175,7 +175,7 @@ export function SynergyExplanationStage({
               </li>
             ))}
           </ul>
-          <p className="mt-4 flex items-start gap-2 text-body-sm leading-relaxed text-text-secondary"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-success-dark" aria-hidden="true" />This is a fixed synthetic demo read. It uses practical home habits, never protected traits or CoHabby&apos;s production model.</p>
+          <p className="mt-4 flex items-start gap-2 text-body-sm leading-relaxed text-text-secondary"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-success-dark" aria-hidden="true" />This score explains practical home habits only.</p>
         </div>
       </div>
 
@@ -218,7 +218,7 @@ function comparisonValue(room: SafeRoomSummary, dimension: NonNullable<CompareSh
 }
 
 const dimensionLabels: Record<NonNullable<CompareShortlistInput['dimensions']>[number], { label: string; icon: typeof Sparkles }> = {
-  synergy_read: { label: 'Synthetic Synergy', icon: Sparkles },
+  synergy_read: { label: 'Synergy', icon: Sparkles },
   budget: { label: 'Monthly rent', icon: BadgeDollarSign },
   move_timing: { label: 'Move timing', icon: CalendarClock },
   home_rhythm: { label: 'Daily rhythm', icon: UsersRound },
@@ -299,7 +299,7 @@ export function ComparisonStage({
                 <th key={room.roomRef} className="border-b border-neutral-200 bg-white p-4 align-top">
                   <div className="flex items-center gap-2.5">
                     <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-neutral-100"><Image src={personVisualFor(room.housemate.personRef)} alt={`Synthetic demo portrait of ${room.housemate.displayName}`} fill sizes="64px" className="object-cover" /></span>
-                    <span><span className="block font-display text-xl font-bold text-text-primary">{room.housemate.displayName}</span><span className="block text-xs font-medium text-info-dark">{room.synergy.score} synthetic Synergy</span></span>
+                    <span><span className="block font-display text-xl font-bold text-text-primary">{room.housemate.displayName}</span><span className="block text-xs font-medium text-info-dark">{room.synergy.score} Synergy</span></span>
                     <span className="relative ml-auto hidden h-12 w-20 shrink-0 overflow-hidden rounded-lg bg-neutral-100 sm:block"><Image src={roomVisualFor(room.roomRef)} alt={`Synthetic demo home context for ${room.housemate.displayName}`} fill sizes="80px" className="object-cover" /></span>
                   </div>
                 </th>

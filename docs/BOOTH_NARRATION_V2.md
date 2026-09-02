@@ -22,7 +22,7 @@ Once I approve, the agent finds fictional people and homes that fit those needs.
 
 ## Take 5 · 1:10 to 1:32
 
-This Synergy Lens is the signature WebMCP moment. It opens from a live match and explains three practical reasons our household rhythms may work. The score is a fixed synthetic fixture. It never uses protected traits or CoHabby's production model.
+This Synergy Lens is the signature WebMCP moment. It opens from a live match and explains three practical reasons our household rhythms may work. This challenge uses demo scores.
 
 ## Take 6 · 1:32 to 1:54
 
@@ -34,7 +34,7 @@ The final tool prepares a first hello using only facts already visible on the pa
 
 ## Take 8 · 2:17 to 2:38
 
-Under the hood, every tool has a strict schema, current-state checks, cancellation, safe output validation, and a render acknowledgement. The source, synthetic fixtures, assets, and tests are all public, and the live footer identifies the exact deployed revision.
+Under the hood, every tool has a strict schema, current-state checks, cancellation, safe output validation, and a render acknowledgement. The source, assets, and tests are public, and the live footer identifies the exact deployed revision.
 
 ## Take 9 · 2:38 to 2:53
 

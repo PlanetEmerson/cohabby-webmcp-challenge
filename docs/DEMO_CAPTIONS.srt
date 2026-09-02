@@ -41,17 +41,14 @@ I can select a whole card, or ask CoHabby why that roommate may fit.
 9
 00:01:10,000 --> 00:01:18,000
 This Synergy Lens is the signature WebMCP moment.
-It opens from a live match.
 
 10
 00:01:18,000 --> 00:01:25,500
-And explains three practical reasons
-our household rhythms may work.
+It opens from a live match and explains three practical reasons
 
 11
 00:01:25,500 --> 00:01:32,000
-The score is a fixed synthetic fixture.
-It never uses protected traits or CoHabby's production model.
+our household rhythms may work. This challenge uses demo scores.
 
 12
 00:01:32,000 --> 00:01:40,000
@@ -89,7 +86,7 @@ cancellation, safe output validation, and a render acknowledgement.
 
 19
 00:02:25,000 --> 00:02:32,000
-The source, synthetic fixtures, assets, and tests are all public,
+The source, assets, and tests are public,
 
 20
 00:02:32,000 --> 00:02:38,000
