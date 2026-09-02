@@ -22,7 +22,7 @@ Official rules: https://webmcp.devpost.com/rules
 - Live app: https://webmcp.cohabby.com
 - Stable fallback: https://cohabby-webmcp-challenge-weld.vercel.app
 - Public source: https://github.com/PlanetEmerson/cohabby-webmcp-challenge
-- Judged source tag: `submission-2026-09-03-final`
+- Judged source tag: `submission-2026-09-03-final-people-first`
 - YouTube: pending CJ narration, edit, public upload, and signed-out verification
 
 ## Devpost media

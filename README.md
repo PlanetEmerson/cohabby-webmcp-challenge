@@ -96,7 +96,7 @@ The app has no backend, login, analytics, cookies, persistent storage, microphon
 
 CoHabby existed before the challenge. This standalone public repository contains only the challenge app and synthetic data. It contains no private Git history, production configuration, member data, backend snapshot, or private product code.
 
-[CHALLENGE_WORK.md](./CHALLENGE_WORK.md) separates pre-existing brand context from work created for the challenge. The live footer prints the exact deployment revision. The immutable tag `submission-2026-09-03-final` identifies the judged source. The earlier V3 and V4 tags remain unchanged as rollback-safe records.
+[CHALLENGE_WORK.md](./CHALLENGE_WORK.md) separates pre-existing brand context from work created for the challenge. The live footer prints the exact deployment revision. The immutable tag `submission-2026-09-03-final-people-first` identifies the judged source. Every earlier tag remains unchanged as a rollback-safe record.
 
 ## License
 

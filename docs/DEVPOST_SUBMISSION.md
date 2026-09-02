@@ -4,7 +4,7 @@
 
 - Live app: [https://webmcp.cohabby.com](https://webmcp.cohabby.com)
 - Public source: [https://github.com/PlanetEmerson/cohabby-webmcp-challenge](https://github.com/PlanetEmerson/cohabby-webmcp-challenge)
-- Judged source tag: `submission-2026-09-03-final`
+- Judged source tag: `submission-2026-09-03-final-people-first`
 - YouTube demo: pending CJ narration and public upload
 
 ## Project title
