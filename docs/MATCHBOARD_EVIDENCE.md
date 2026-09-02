@@ -2,6 +2,21 @@
 
 Date: September 1, 2026
 
+## CoHabby Living named release
+
+- Public product name: `CoHabby Living`.
+- Judged source tag: `submission-2026-09-03-cohabby-living`.
+- Deployed source: `9225e33559015c58a2f3f9a6fd0b5ce60b87a3cd`.
+- The app header, browser metadata, README, Devpost copy, YouTube package, narration, and captions use the same short public name. WebMCP tool names, schemas, state behavior, and repository URLs remain unchanged.
+- The V2 video package includes a booth-only nine-take read, an exact five-prompt screen-recording runbook, a timed shot list, and 22 caption cues. The booth read, timed narration, and captions match word for word at 337 spoken words and end at 2:53.
+- A fresh public-tag clone under Node 22 passed all 95 tests, type-check, lint, the exact-SHA production build, the production dependency audit, diff check, and clean status.
+- Vercel reports the production deployment Ready. The custom domain and stable fallback return HTTP 200 with the required security headers. Deployment warning and error logs are empty.
+- The live header shows `CoHabby Living` and `People-first roommate matching`. The browser title is `CoHabby Living | Compatibility-first roommate finder`, and the footer shows `Source 9225e3355901`.
+- The in-app browser discovered all six exact WebMCP tools. `get_living_context` returned `ready` in phase `READY`, and the browser reported no warning or error.
+- Live desktop Lighthouse scores 100 for performance, accessibility, best practices, and SEO. It measures 0.56 s LCP, 0 ms TBT, and 0.0003 CLS.
+- Live mobile Lighthouse scores 99 for performance and 100 for accessibility, best practices, and SEO. It measures 2.27 s LCP, 0 ms TBT, and 0.0064 CLS.
+- Every earlier immutable submission tag remains unchanged.
+
 ## Final people-first submission release
 
 - Judged source tag: `submission-2026-09-03-final-people-first`.
