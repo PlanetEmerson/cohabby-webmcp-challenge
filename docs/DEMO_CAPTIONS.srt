@@ -5,7 +5,7 @@ Finding someone you can actually live well with is harder.
 
 2
 00:00:07,000 --> 00:00:14,000
-I built CoHabby Living Decision Room
+I built CoHabby Living
 to put roommate compatibility first.
 
 3
@@ -15,7 +15,7 @@ They read the same state I see. Five can change this page in real time.
 
 4
 00:00:22,500 --> 00:00:31,000
-Each has one clear job.
+And each has one clear job.
 There is no chatbot behind it and no second agent.
 
 5
@@ -36,7 +36,7 @@ and homes that fit those needs.
 8
 00:00:59,500 --> 00:01:10,000
 The person comes first. The room is useful context.
-I can select a whole card, or ask why that roommate may fit.
+I can select a whole card, or ask CoHabby why that roommate may fit.
 
 9
 00:01:10,000 --> 00:01:18,000
@@ -45,7 +45,7 @@ It opens from a live match.
 
 10
 00:01:18,000 --> 00:01:25,500
-It explains three practical reasons
+And explains three practical reasons
 our household rhythms may work.
 
 11
@@ -84,24 +84,23 @@ that no real message was sent.
 
 18
 00:02:17,000 --> 00:02:25,000
-Under the hood, every tool has a strict schema,
-current-state checks, cancellation, and safe output validation.
+Under the hood, every tool has a strict schema, current-state checks,
+cancellation, safe output validation, and a render acknowledgement.
 
 19
 00:02:25,000 --> 00:02:32,000
-Every mutation waits for the visible page to render.
+The source, synthetic fixtures, assets, and tests are all public,
 
 20
 00:02:32,000 --> 00:02:38,000
-The source, fixtures, assets, and tests are public.
-The footer identifies the exact deployed revision.
+and the live footer identifies the exact deployed revision.
 
 21
 00:02:38,000 --> 00:02:45,500
-This is what WebMCP changes for CoHabby.
-The browser handles the structured work.
+CoHabby Living turns everyday habits into a thoughtful
+roommate introduction on one shared page.
 
 22
 00:02:45,500 --> 00:02:53,000
-I keep the human decisions. Together, we get from living habits
-to a thoughtful roommate introduction on one shared page.
+The browser handles the structured work. I keep the human decisions.
+That is the kind of web I want to build.

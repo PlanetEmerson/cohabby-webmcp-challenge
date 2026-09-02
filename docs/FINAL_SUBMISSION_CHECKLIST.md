@@ -22,7 +22,7 @@ Official rules: https://webmcp.devpost.com/rules
 - Live app: https://webmcp.cohabby.com
 - Stable fallback: https://cohabby-webmcp-challenge-weld.vercel.app
 - Public source: https://github.com/PlanetEmerson/cohabby-webmcp-challenge
-- Judged source tag: `submission-2026-09-03-final-people-first`
+- Judged source tag: `submission-2026-09-03-cohabby-living`
 - YouTube: pending CJ narration, edit, public upload, and signed-out verification
 
 ## Devpost media
@@ -39,7 +39,7 @@ Use the opening screen as the project cover. Do not upload a raw code screenshot
 
 ## Final form review
 
-- Project name is `CoHabby Living Decision Room`.
+- Project name is `CoHabby Living`.
 - Tagline and four answers match `DEVPOST_SUBMISSION.md`.
 - Live URL loads without login and reports `Site tools ready` in the in-app browser.
 - Repository is public, MIT is detected, and the judged tag resolves to the deployed SHA.
@@ -48,6 +48,13 @@ Use the opening screen as the project cover. Do not upload a raw code screenshot
 - No form field contains a private path, private repository name, credential, real member detail, or production Synergy claim.
 - Preview every link once from the final Devpost preview.
 - Stop before clicking the final submit button and obtain CJ's explicit approval.
+
+## Video handoff order
+
+1. Record the exact text in `BOOTH_NARRATION_V2.md`.
+2. Record the nine clips in `SCREEN_CAPTURE_RUNBOOK_V2.md`.
+3. Provide the WAV and MOV files for final assembly and review.
+4. Upload the approved export with the copy in `YOUTUBE_PACKAGE.md`.
 
 ## Post-submission freeze
 

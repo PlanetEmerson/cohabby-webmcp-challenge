@@ -1,6 +1,6 @@
-# CoHabby Living Decision Room
+# CoHabby Living
 
-I built Living Decision Room to show what WebMCP can do for a decision that starts with people. A browser agent can understand how someone wants to live, bring fictional roommates and homes onto the page, explain a fixed synthetic Synergy read, compare daily life side by side, and prepare a practical first hello.
+I built CoHabby Living to show what WebMCP can do for a decision that starts with people. A browser agent can understand how someone wants to live, bring fictional roommates and homes onto the page, explain a fixed synthetic Synergy read, compare daily life side by side, and prepare a practical first hello.
 
 The person keeps the two decisions that matter. They approve the living plan and confirm the introduction.
 
@@ -76,7 +76,9 @@ The app has no backend, login, analytics, cookies, persistent storage, microphon
 
 ## Submission package
 
+- [Booth-ready narration](./docs/BOOTH_NARRATION_V2.md)
 - [Final demo narration and shot list](./docs/DEMO_SCRIPT.md)
+- [Exact screen-recording runbook](./docs/SCREEN_CAPTURE_RUNBOOK_V2.md)
 - [Screen capture and assembly plan](./docs/VIDEO_CAPTURE_PLAN.md)
 - [YouTube captions](./docs/DEMO_CAPTIONS.srt)
 - [YouTube title, description, and upload settings](./docs/YOUTUBE_PACKAGE.md)
@@ -96,7 +98,7 @@ The app has no backend, login, analytics, cookies, persistent storage, microphon
 
 CoHabby existed before the challenge. This standalone public repository contains only the challenge app and synthetic data. It contains no private Git history, production configuration, member data, backend snapshot, or private product code.
 
-[CHALLENGE_WORK.md](./CHALLENGE_WORK.md) separates pre-existing brand context from work created for the challenge. The live footer prints the exact deployment revision. The immutable tag `submission-2026-09-03-final-people-first` identifies the judged source. Every earlier tag remains unchanged as a rollback-safe record.
+[CHALLENGE_WORK.md](./CHALLENGE_WORK.md) separates pre-existing brand context from work created for the challenge. The live footer prints the exact deployment revision. The immutable tag `submission-2026-09-03-cohabby-living` identifies the judged source. Every earlier tag remains unchanged as a rollback-safe record.
 
 ## License
 

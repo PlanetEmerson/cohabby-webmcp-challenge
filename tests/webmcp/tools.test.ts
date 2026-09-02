@@ -26,7 +26,7 @@ async function executeAfterRendering(
   return result;
 }
 
-describe('Living Decision Room WebMCP tools', () => {
+describe('CoHabby Living WebMCP tools', () => {
   it('makes read and mutation activity visible without changing tool output', async () => {
     const store = createDecisionRoomStore();
     const activity = createDecisionRoomActivityStore();

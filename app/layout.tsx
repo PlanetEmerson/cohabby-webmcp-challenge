@@ -11,9 +11,9 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://webmcp.cohabby.com'),
-  title: 'Meet a compatible roommate | CoHabby Living Decision Room',
+  title: 'CoHabby Living | Compatibility-first roommate finder',
   description: 'Use six WebMCP tools to explore fictional roommates, synthetic Synergy reads, home context, and a human-approved introduction.',
-  applicationName: 'CoHabby Living Decision Room',
+  applicationName: 'CoHabby Living',
   icons: { icon: '/assets/brand/cohabby-app-icon.png' },
   robots: { index: true, follow: true },
   other: { 'theme-color': '#FBF5F1' },

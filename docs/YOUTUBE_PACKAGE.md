@@ -2,11 +2,11 @@
 
 ## Title
 
-CoHabby Living Decision Room | OpenAI WebMCP Challenge
+CoHabby Living | OpenAI WebMCP Challenge
 
 ## Description
 
-CoHabby Living Decision Room is a compatibility-first roommate demo built for the OpenAI WebMCP Challenge.
+CoHabby Living is a compatibility-first roommate experience built for the OpenAI WebMCP Challenge.
 
 A browser agent can read how someone wants to live, stage a plan for human approval, find fictional roommate matches, explain a fixed synthetic Synergy read, compare daily life, and prepare a first hello. The person approves the plan and confirms the introduction.
 

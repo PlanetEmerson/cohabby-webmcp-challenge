@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-describe('Living Matchboard motion policy', () => {
+describe('CoHabby Living motion policy', () => {
   it('keeps causal motion and makes the Synergy shimmer reduced-motion safe', () => {
     const page = readFileSync('components/decision-room/decision-room.tsx', 'utf8');
     const stages = [

@@ -1,4 +1,4 @@
-# CoHabby Living Decision Room boundaries
+# CoHabby Living boundaries
 
 This repository is the standalone public WebMCP Challenge build.
 

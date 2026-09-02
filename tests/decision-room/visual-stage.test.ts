@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { visualStageForPhase } from '@/lib/decision-room/visual-stage';
 import type { DecisionRoomPhase } from '@/lib/decision-room/types';
 
-describe('Living Matchboard visual stage', () => {
+describe('CoHabby Living visual stage', () => {
   it.each<readonly [DecisionRoomPhase, string]>([
     ['READY', 'ready'],
     ['BRIEF_STAGED', 'brief'],

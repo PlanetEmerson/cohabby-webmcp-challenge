@@ -1,6 +1,13 @@
-# Video capture and assembly plan
+# Video capture and assembly plan V2
 
-The strongest submission video is a real screen recording with CJ's voice recorded separately. It proves the product works and gives us clean control over pacing.
+The strongest submission video is a real CoHabby Living screen recording with CJ's voice recorded separately. It proves the product works and gives us clean control over pacing.
+
+Use the package in this order:
+
+1. Record `BOOTH_NARRATION_V2.md` in the booth.
+2. Capture the nine clips in `SCREEN_CAPTURE_RUNBOOK_V2.md`.
+3. Assemble them against the timings in `DEMO_SCRIPT.md`.
+4. Add `DEMO_CAPTIONS.srt` and verify every caption against the final audio.
 
 ## Capture setup
 
@@ -11,7 +18,7 @@ The strongest submission video is a real screen recording with CJ's voice record
 5. Record at 30 fps. Capture the browser content and the minimum agent-tool area needed to prove the WebMCP call.
 6. Do not record a microphone with the screen capture. Record CJ's voice as a separate clean WAV so mistakes can be fixed without repeating the demo.
 
-On macOS, press Shift-Command-5, choose **Record Selected Portion**, draw a 16:9 region around the demo, set Microphone to **None**, and press **Record**. Make one uninterrupted safety take, then capture the nine short sections from `DEMO_SCRIPT.md` as separate clips.
+On macOS, press Shift-Command-5, choose **Record Selected Portion**, draw a 16:9 region around the demo, set Microphone to **None**, and press **Record**. Capture the nine short clips in the runbook rather than trying to perform the full demo perfectly in one take.
 
 ## Clean master sequence
 

@@ -40,7 +40,7 @@ describe('exact WebMCP output contracts', () => {
       stateVersion: 4,
       status: 'error',
       phase: 'RESULTS_READY',
-      error: { code: 'canceled', message: 'The action was canceled without changing the decision room.' },
+      error: { code: 'canceled', message: 'The action was canceled without changing CoHabby Living.' },
     } as const;
     expect(assertToolOutput('explain_synergy_match', failure)).toBe(failure);
     expect(() => assertToolOutput('explain_synergy_match', { ...failure, retryAfter: 1 }))

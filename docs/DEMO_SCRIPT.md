@@ -1,4 +1,4 @@
-# Final demo script
+# Final demo script V2
 
 Target runtime: 2 minutes 45 seconds to 2 minutes 55 seconds. Record the real submitted build at 1920×1080 and 30 fps. CJ reads the narration in his normal voice. Use no music.
 
@@ -8,7 +8,7 @@ On screen: Start on the reset opening screen. Hold long enough to read the headl
 
 Narration:
 
-> Finding a room is one thing. Finding someone you can actually live well with is harder. I built CoHabby Living Decision Room to put roommate compatibility first.
+> Finding a room is one thing. Finding someone you can actually live well with is harder. I built CoHabby Living to put roommate compatibility first.
 
 ## 0:14 to 0:31
 
@@ -72,7 +72,7 @@ On screen: Return to the success stage and let the two roommate paths meet at th
 
 Narration:
 
-> This is what WebMCP changes for CoHabby. The browser handles the structured work. I keep the human decisions. Together, we get from living habits to a thoughtful roommate introduction on one shared page.
+> CoHabby Living turns everyday habits into a thoughtful roommate introduction on one shared page. The browser handles the structured work. I keep the human decisions. That is the kind of web I want to build.
 
 ## Recording rules
 

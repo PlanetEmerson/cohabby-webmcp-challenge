@@ -14,7 +14,7 @@ This repository began during the WebMCP Challenge submission period with root sc
 
 The following work was built for the challenge:
 
-- The standalone CoHabby Living Decision Room page.
+- The standalone CoHabby Living page.
 - Six imperative top-level WebMCP tools.
 - Strict input schemas and CSP-safe standalone Ajv validation.
 - Exact output schemas plus a second safe-output projection.

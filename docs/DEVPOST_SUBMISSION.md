@@ -4,12 +4,12 @@
 
 - Live app: [https://webmcp.cohabby.com](https://webmcp.cohabby.com)
 - Public source: [https://github.com/PlanetEmerson/cohabby-webmcp-challenge](https://github.com/PlanetEmerson/cohabby-webmcp-challenge)
-- Judged source tag: `submission-2026-09-03-final-people-first`
+- Judged source tag: `submission-2026-09-03-cohabby-living`
 - YouTube demo: pending CJ narration and public upload
 
 ## Project title
 
-CoHabby Living Decision Room
+CoHabby Living
 
 ## Tagline
 
@@ -17,7 +17,7 @@ Live with someone who gets you. Your browser agent sorts the options. You choose
 
 ## Short description
 
-CoHabby helps people find roommates they may live well with. I built Living Decision Room so a person and their browser agent can work through that choice on the same page. The agent can understand a living style, stage must-haves, find fictional people and homes, explain a fixed synthetic Synergy read, compare daily life, and prepare a practical first hello. The person approves the living plan and confirms the introduction.
+CoHabby helps people find roommates they may live well with. I built CoHabby Living so a person and their browser agent can work through that choice on the same page. The agent can understand a living style, stage must-haves, find fictional people and homes, explain a fixed synthetic Synergy read, compare daily life, and prepare a practical first hello. The person approves the living plan and confirms the introduction.
 
 ## Testing instructions
 
@@ -65,7 +65,7 @@ The app uses twelve fictional people, twelve fictional homes, and fixed syntheti
 
 ## What is new for the challenge?
 
-CoHabby existed before the challenge. Living Decision Room, its six WebMCP tools, public state machine, synthetic fixtures, original generated assets, Synergy Lens, comparison, human controls, tests, public repository, and standalone deployment were built during the submission period. `CHALLENGE_WORK.md` separates that work from the private product.
+CoHabby existed before the challenge. CoHabby Living, its six WebMCP tools, public state machine, synthetic fixtures, original generated assets, Synergy Lens, comparison, human controls, tests, public repository, and standalone deployment were built during the submission period. `CHALLENGE_WORK.md` separates that work from the private product.
 
 ## Technology
 
@@ -73,7 +73,7 @@ WebMCP, Next.js, React, TypeScript, Ajv, Vitest, Tailwind CSS, Motion, Paper Sha
 
 ## Suggested gallery captions
 
-1. Six WebMCP tools share one visible decision room with the person.
+1. Six WebMCP tools share one visible CoHabby Living page with the person.
 2. The agent adds fictional roommate matches while the home stays practical context.
 3. `explain_synergy_match` opens a fixed synthetic Synergy read with three bounded reasons.
 4. The agent compares current roommates, then the person chooses who to greet and how the hello should sound.

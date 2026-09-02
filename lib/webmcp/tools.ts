@@ -19,7 +19,7 @@ const errorMessages: Record<ToolErrorCode, string> = {
   stale_execution: 'The page changed while this action was running. Read the current context and try again.',
   unsupported_market: 'Choose one of the demo markets shown on the page.',
   unsafe_housing_request: 'CoHabby compares practical living needs and does not rank by protected traits.',
-  canceled: 'The action was canceled without changing the decision room.',
+  canceled: 'The action was canceled without changing CoHabby Living.',
   internal_error: 'The demo could not complete this action safely.',
 };
 

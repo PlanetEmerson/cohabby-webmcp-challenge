@@ -29,7 +29,7 @@ afterEach(() => {
   Reflect.deleteProperty(document, 'modelContext');
 });
 
-describe('Living Decision Room human experience', () => {
+describe('CoHabby Living human experience', () => {
   it('registers one strict-mode-safe six-tool generation and cleans it up on unmount', async () => {
     const context = new BrowserModelContext();
     Object.defineProperty(document, 'modelContext', { configurable: true, value: context });
@@ -45,6 +45,9 @@ describe('Living Decision Room human experience', () => {
     const user = userEvent.setup();
     render(<DecisionRoom sourceRevision="test123" />);
 
+    expect(screen.getByText('CoHabby Living')).toBeInTheDocument();
+    expect(screen.getByText('People-first roommate matching')).toBeInTheDocument();
+    expect(screen.queryByText('Living Decision Room')).not.toBeInTheDocument();
     expect(screen.getByText('Compatibility-first roommate finder')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Live with someone who gets you.' })).toBeInTheDocument();
     expect(screen.getByText('CoHabby finds roommates whose habits fit yours. Your browser agent does the sorting. You choose who to meet.')).toBeInTheDocument();

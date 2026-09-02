@@ -2,7 +2,7 @@
 
 ## Challenge boundary
 
-Living Decision Room is a synthetic browser demo. It has no backend, authentication, production API, model API, microphone access, speech recognition, WebRTC, analytics, cookies, or persistent storage.
+CoHabby Living is a synthetic browser demo. It has no backend, authentication, production API, model API, microphone access, speech recognition, WebRTC, analytics, cookies, or persistent storage.
 
 Do not enter real personal information. The app does not need it.
 

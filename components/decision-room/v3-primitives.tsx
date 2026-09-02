@@ -68,8 +68,8 @@ export function CoHabbyBrand() {
         />
       </span>
       <div>
-        <p className="font-display text-lg font-bold tracking-tight text-text-primary">CoHabby</p>
-        <p className="text-body-sm text-text-tertiary">Living Decision Room</p>
+        <p className="font-display text-lg font-bold tracking-tight text-text-primary">CoHabby Living</p>
+        <p className="text-body-sm text-text-tertiary">People-first roommate matching</p>
       </div>
     </div>
   );
