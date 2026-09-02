@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 describe('Living Matchboard motion policy', () => {
-  it('uses user-controlled causal motion without looping or scroll effects', () => {
+  it('keeps causal motion and makes the Synergy shimmer reduced-motion safe', () => {
     const page = readFileSync('components/decision-room/decision-room.tsx', 'utf8');
     const stages = [
       readFileSync('components/decision-room/living-plan-stages.tsx', 'utf8'),
@@ -17,6 +17,9 @@ describe('Living Matchboard motion policy', () => {
     expect(field).toContain('prefers-reduced-motion: reduce');
     expect(field).toContain("connection?.saveData");
     expect(field).toContain('data-living-field={animated ? \'shader\' : \'static\'}');
+    expect(css).toContain('@keyframes synergy-button-shimmer');
+    expect(css).toContain('.synergy-shimmer::after');
+    expect(css).toMatch(/prefers-reduced-motion:[\s\S]*\.synergy-shimmer::after[\s\S]*animation:\s*none/u);
     expect(`${page}\n${stages}`).not.toMatch(/repeat:\s*(?:Infinity|-1)|whileInView|useScroll|useAnimationFrame/u);
   });
 });

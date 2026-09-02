@@ -54,12 +54,18 @@ describe('people-first visual stages', () => {
     const user = userEvent.setup();
     const onToggle = vi.fn();
     const onExplain = vi.fn();
-    render(<PeopleHomeCard room={rooms[0]!} checked={false} disabled={false} onToggle={onToggle} onExplain={onExplain} />);
+    const view = render(<PeopleHomeCard room={rooms[0]!} checked={false} disabled={false} onToggle={onToggle} onExplain={onExplain} />);
+
+    const card = view.container.querySelector('article');
+    expect(card).toHaveAttribute('data-card-selectable', 'true');
+    expect(card).toHaveClass('cursor-pointer', 'focus-within:ring-4', 'hover:border-info/55');
 
     await user.click(screen.getByText('Maya'));
     expect(onToggle).toHaveBeenCalledTimes(1);
 
-    await user.click(screen.getByRole('button', { name: "Why Maya's Synergy?" }));
+    const synergyButton = screen.getByRole('button', { name: "Why Maya's Synergy?" });
+    expect(synergyButton).toHaveClass('synergy-shimmer');
+    await user.click(synergyButton);
     expect(onExplain).toHaveBeenCalledTimes(1);
     expect(onToggle).toHaveBeenCalledTimes(1);
 

@@ -30,14 +30,15 @@ export function PeopleHomeCard({
   return (
     <m.article
       layoutId={`match-${room.roomRef}`}
+      data-card-selectable="true"
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.18 }}
       className={cn(
-        'group overflow-hidden rounded-[1.4rem] border bg-white shadow-card transition duration-causal hover:-translate-y-0.5 hover:shadow-elevated',
-        checked ? 'border-info ring-2 ring-info/15' : 'border-white/80',
-        disabled && !checked && 'opacity-60',
+        'group overflow-hidden rounded-[1.4rem] border bg-white shadow-card transition duration-causal focus-within:ring-4 focus-within:ring-info/25 focus-within:ring-offset-2 hover:-translate-y-0.5 hover:shadow-elevated',
+        checked ? 'border-info ring-2 ring-info/15' : 'border-white/80 hover:border-info/55 hover:ring-2 hover:ring-white/70',
+        disabled && !checked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
       )}
     >
       <input
@@ -83,12 +84,12 @@ export function PeopleHomeCard({
         </label>
         <Button
           variant="ghost"
-          className="absolute bottom-3 right-3 z-10 bg-white/90 px-3 text-info-dark shadow-sm backdrop-blur hover:bg-white"
+          className="synergy-shimmer absolute bottom-3 right-3 z-10 bg-white/90 px-3 text-info-dark shadow-sm backdrop-blur hover:bg-white"
           onClick={onExplain}
           aria-label={`Why ${name}'s Synergy?`}
         >
-          <Sparkles className="h-4 w-4" aria-hidden="true" />
-          Why Synergy?
+          <Sparkles className="relative z-10 h-4 w-4" aria-hidden="true" />
+          <span className="relative z-10">Why Synergy?</span>
         </Button>
       </div>
       <label htmlFor={selectionId} className={cn('block cursor-pointer', disabled && !checked && 'cursor-not-allowed')}>

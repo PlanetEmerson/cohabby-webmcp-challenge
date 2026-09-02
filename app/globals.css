@@ -38,6 +38,53 @@
       0 1px 0 rgb(255 255 255 / 0.96),
       0 0 10px rgb(255 255 255 / 0.82);
   }
+
+  .synergy-shimmer {
+    isolation: isolate;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .synergy-shimmer::after {
+    animation: synergy-button-shimmer 4.8s ease-in-out 0.7s infinite;
+    background: linear-gradient(
+      108deg,
+      transparent 40%,
+      rgb(255 137 110 / 0.12) 45%,
+      rgb(244 201 93 / 0.7) 50%,
+      rgb(51 184 173 / 0.16) 55%,
+      transparent 60%
+    );
+    content: '';
+    inset: -120% -55%;
+    pointer-events: none;
+    position: absolute;
+    transform: translateX(-72%) rotate(7deg);
+    z-index: 0;
+  }
+}
+
+@keyframes synergy-button-shimmer {
+  0%,
+  72% {
+    opacity: 0;
+    transform: translateX(-72%) rotate(7deg);
+  }
+
+  77% {
+    opacity: 0.9;
+  }
+
+  91% {
+    opacity: 0.9;
+    transform: translateX(72%) rotate(7deg);
+  }
+
+  96%,
+  100% {
+    opacity: 0;
+    transform: translateX(72%) rotate(7deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -48,5 +95,10 @@
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .synergy-shimmer::after {
+    animation: none;
+    opacity: 0;
   }
 }
