@@ -2,6 +2,21 @@
 
 Date: September 1, 2026
 
+## Final people-first submission release
+
+- Judged source tag: `submission-2026-09-03-final-people-first`.
+- Deployed source: `cb6c5f0df5b4a57357d62b8b93abb6786bbcc5d8`.
+- The final interaction polish gives every roommate card a visible card-wide hover and focus treatment while preserving whole-card mouse and keyboard selection. The independent `Why Synergy?` action now has a reduced-motion-safe shimmer and never toggles selection.
+- The repository includes the final 2:53 narration, shot list, screen-capture plan, 22-cue SRT file, YouTube package, paste-ready Devpost answers, testing instructions, gallery captions, and final submission checklist.
+- A fresh public-tag clone under Node 22 passed all 94 tests, type-check, lint, the exact-SHA production build, the production dependency audit, diff check, and clean status.
+- The final production deployment is Ready. The custom domain and stable fallback return HTTP 200 with the required security headers. Deployment warning and error logs are empty.
+- The live footer shows `Source cb6c5f0df5b4`.
+- The final in-app browser run discovered all six exact WebMCP tools, completed the six-tool path with both human-only actions, and reached `Demo confirmed. No real message was sent.`
+- The final in-app browser run reported no warning or error.
+- Final live desktop Lighthouse scores 100 for performance, accessibility, best practices, and SEO. It measures 0.38 s LCP, 0 ms TBT, and 0.0005 CLS.
+- Final live mobile Lighthouse scores 99 for performance and 100 for accessibility, best practices, and SEO. It measures 2.27 s LCP, 38 ms TBT, and 0.0074 CLS.
+- Five clean full-page submission frames were captured from the exact final deployment after every lazy image reported ready.
+
 ## V4 presentation release
 
 - The six WebMCP contracts, eight product phases, fixtures, and two human-only approvals remain unchanged.
